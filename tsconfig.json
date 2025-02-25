@@ -4,14 +4,21 @@
     "useDefineForClassFields": true,
     "module": "ESNext",
     "moduleResolution": "Node",
-    "strict": true,
     "jsx": "preserve",
     "sourceMap": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
     "lib": ["ESNext", "DOM"],
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "removeComments": true, //編譯時是否移除註解
+    "strict": true, // 啟用所有嚴格類型檢查選項
+    "noUnusedLocals": true, // 有未使用的變數時，拋出錯誤
+    "noFallthroughCasesInSwitch": true, //不允許 switch 的 case 語句貫穿
+    "noEmitOnError": false  // 如果有錯誤，則不輸出編譯結果
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
   "references": [{ "path": "./tsconfig.node.json" }]
