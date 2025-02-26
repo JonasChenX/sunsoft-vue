@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-const home = () => import('@/components/HelloWorld.vue');
+const home = () => import('@/components/Home.vue');
+import ss01 from '@/router/ss01'
 const routes = [
     {
         path: '/',
@@ -10,7 +11,8 @@ const routes = [
         name: 'home',
         meta: { requiresAuth: true },
         component: home
-    }
+    },
+    ...ss01
 ]
 
 const router = createRouter({

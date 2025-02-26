@@ -1,16 +1,30 @@
-# Vue 3 + TypeScript + Vite
+# 命名規則
+- 資料夾 ( 全小寫 + 短橫線 )
+- Vue文件 ( 大駝峰 )
+- TS文件 ( 全小寫 + 短橫線 )
+- 元件命名 ( 全小寫 + 短橫線 )
+- 功能代號 ( 全大寫 )
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
-
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
-
-## Type Support For `.vue` Imports in TS
-
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's Take Over mode by following these steps:
-
-1. Run `Extensions: Show Built-in Extensions` from VS Code's command palette, look for `TypeScript and JavaScript Language Features`, then right click and select `Disable (Workspace)`. By default, Take Over mode will enable itself if the default TypeScript extension is disabled.
-2. Reload the VS Code window by running `Developer: Reload Window` from the command palette.
-
-You can learn more about Take Over mode [here](https://github.com/johnsoncodehk/volar/discussions/471).
+# 功能目錄
+- 員工管理 (目錄)
+  - 請假/加班記錄查詢 SS101
+  - 出勤時數查詢 SS102
+  - 打卡紀錄查詢 SS103
+  - 基本資料查詢 SS104
+  - 修改密碼 SS105
+- 差勤管理 (目錄)
+  - 打卡資料上傳 SS201
+  - 打卡補登申請 SS202
+  - 請假/加班申請 SS203
+  - 特休時數申請 SS205
+- 人事管理 (目錄)
+  - 員工基本資料管理 SS301
+  - 群組權限設定 SS302
+  - 公告發佈管理 SS303
+- 系統設定 (目錄)
+  - 添加補班日/放假日設定 SS901
+  - 登入紀錄查看 SS902
+  - 功能面頁跳轉紀錄查看 SS903
+  - 功能API執行紀錄查看 SS904
+  - 系統日誌查看 SS905
+- 打卡登入 (功能) SS001

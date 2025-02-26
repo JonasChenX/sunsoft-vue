@@ -1,0 +1,204 @@
+[
+    {
+        "id": 1,
+        "meta":{
+            "directory": true,
+            "icon": "circle-user",
+            "label": "員工管理"
+        },
+        "children": [
+            {
+                "id": 6,
+                "path": "/ss101",
+                "meta": {
+                  "functionId": "SS101",
+                  "label": "請假/加班紀錄查詢",
+                  "icon": ""
+                }
+            },
+            {
+                "id": 7,
+                "path": "/ss102",
+                "meta": {
+                    "functionId": "SS102",
+                    "label": "出勤時數查詢",
+                    "icon": ""
+                }
+            },
+            {
+                "id": 8,
+                "path": "/ss103",
+                "meta": {
+                    "functionId": "SS103",
+                    "label": "打卡紀錄查詢",
+                    "icon": ""
+                }
+            },
+            {
+                "id": 9,
+                "path": "/ss104",
+                "meta": {
+                    "functionId": "SS104",
+                    "label": "基本資料查詢",
+                    "icon": ""
+                }
+            },
+            {
+                "id": 10,
+                "path": "/ss105",
+                "meta": {
+                    "functionId": "SS105",
+                    "label": "修改密碼",
+                    "icon": ""
+                }
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "meta":{
+            "directory": true,
+            "icon": "calendar-days",
+            "label": "差勤管理"
+        },
+        "children": [
+            {
+                "id": 11,
+                "path": "/ss201",
+                "meta": {
+                    "functionId": "SS201",
+                    "label": "打卡資料上傳",
+                    "icon": ""
+                }
+            },
+            {
+                "id": 12,
+                "path": "/ss202",
+                "meta": {
+                    "functionId": "SS202",
+                    "label": "打卡補登申請",
+                    "icon": ""
+                }
+            },
+            {
+                "id": 13,
+                "path": "/ss203",
+                "meta": {
+                    "functionId": "SS203",
+                    "label": "請假/加班申請",
+                    "icon": ""
+                }
+            },
+            {
+                "id": 14,
+                "path": "/ss204",
+                "meta": {
+                    "functionId": "SS204",
+                    "label": "特休時數申請",
+                    "icon": ""
+                }
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "meta":{
+            "directory": true,
+            "icon": "tasks",
+            "label": "人事管理"
+        },
+        "children": [
+            {
+                "id": 16,
+                "path": "/ss301",
+                "meta":{
+                    "functionId": "SS301",
+                    "icon": "",
+                    "label": "員工基本資料管理"
+                }
+            },
+            {
+                "id": 17,
+                "path": "/ss302",
+                "meta":{
+                    "functionId": "SS302",
+                    "icon": "",
+                    "label": "群組權限設定"
+                }
+            },
+            {
+                "id": 18,
+                "path": "/ss303",
+                "meta":{
+                    "functionId": "SS303",
+                    "icon": "",
+                    "label": "公告發佈管理"
+                }
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "meta":{
+            "directory": true,
+            "icon": "gear",
+            "label": "系統設定"
+        },
+        "children":[
+            {
+                "id": 19,
+                "path": "/ss901",
+                "meta":{
+                    "functionId": "SS901",
+                    "icon": "",
+                    "label": "添加補班日/放假日設定"
+                }
+            },
+            {
+                "id": 20,
+                "path": "/ss902",
+                "meta":{
+                    "functionId": "SS902",
+                    "icon": "",
+                    "label": "登入紀錄查看"
+                }
+            },
+            {
+                "id": 21,
+                "path": "/ss903",
+                "meta":{
+                    "functionId": "SS903",
+                    "icon": "",
+                    "label": "功能面頁跳轉紀錄查看"
+                }
+            },
+            {
+                "id": 22,
+                "path": "/ss904",
+                "meta":{
+                    "functionId": "SS904",
+                    "icon": "",
+                    "label": "功能API執行紀錄查看"
+                }
+            },
+            {
+                "id": 22,
+                "path": "/ss905",
+                "meta":{
+                    "functionId": "SS905",
+                    "icon": "",
+                    "label": "系統日誌查看"
+                }
+            }
+        ]
+    },
+    {
+        "id": 23,
+        "meta":{
+            "directory": false,
+            "icon": "check-double",
+            "label": "打卡系統"
+        },
+        "path": "/ss001"
+    }
+]
