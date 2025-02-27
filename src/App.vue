@@ -3,5 +3,6 @@
   <router-view/>
 </template>
 <script setup lang="ts">
-import Navbar from '@/core/Navbar.vue'
+import { defineAsyncComponent } from 'vue';
+const Navbar = defineAsyncComponent(() => import('@/core/Navbar.vue'));
 </script>

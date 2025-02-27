@@ -4,6 +4,7 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
 import colors from 'vuetify/util/colors'
+import '@mdi/font/css/materialdesignicons.css' // 確保已匯入 MDI 字體
 
 const vuetify = createVuetify({
     components,
@@ -19,7 +20,9 @@ const vuetify = createVuetify({
             },
         },
     },
-
+    icons: {
+        defaultSet: 'mdi', // 設定預設圖示集
+    },
 })
 
 export default vuetify
