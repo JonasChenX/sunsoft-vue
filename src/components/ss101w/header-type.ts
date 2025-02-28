@@ -1,7 +1,7 @@
-import {STableHeader} from "@/common/s-table/s-table-type";
+import { STableHeaderType } from "@/common/s-table/s-table-type";
 
 //類型 種類 請假時間起 請假時間迄 時數 審核狀態 審核人員 發送時間 最後更新時間 事由 退件原因
-export const ss101TableHeader : STableHeader[] = [
+export const ss101TableHeader : STableHeaderType[] = [
     {
         title: '類型',
         key: 'type',

@@ -38,22 +38,18 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { STableHeader, STableItem } from "@/common/s-table/s-table-type";
+import { STableHeaderType, STableItemType } from "@/common/s-table/s-table-type";
 defineOptions({
   name: "s-table"
 });
 
-const aaa = () => {
-  console.log("aa")
-}
-
 const props = defineProps({
   headers: {
-    type: Array as PropType<STableHeader[]>,
+    type: Array as PropType<STableHeaderType[]>,
     required: true
   },
   items: {
-    type: Array as PropType<STableItem[]>,
+    type: Array as PropType<STableItemType[]>,
     required: true
   },
   isSelect: {
