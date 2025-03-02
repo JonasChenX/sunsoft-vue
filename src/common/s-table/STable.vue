@@ -15,6 +15,7 @@
     :loading="props.loading"
     :style="'white-space:nowrap'"
     item-selectable="selectable"
+    :hide-default-footer="props.loading"
   >
     <!-- Filter搜尋器 -->
     <template v-if="props.isFilter" v-slot:top>
