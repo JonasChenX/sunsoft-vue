@@ -11,7 +11,7 @@ export default [
         component: SS101,
         meta: {
             functionId: 'SS101',
-            label: '請假/加班紀錄查詢',
+            label: '申請紀錄查詢(特休/請假/加班)',
             requiresAuth: true
         },
     },

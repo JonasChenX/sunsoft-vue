@@ -15,7 +15,7 @@
     :loading="props.loading"
     :style="'white-space:nowrap'"
     item-selectable="selectable"
-    :hide-default-footer="props.loading"
+    :hide-default-footer="props.loading || props.isHideFooter"
   >
     <!-- Filter搜尋器 -->
     <template v-if="props.isFilter" v-slot:top>
@@ -64,7 +64,11 @@ const props = defineProps({
   loading: {
     type: Boolean,
     default: false
-  }
+  },
+  isHideFooter: {
+      type: Boolean,
+      default: false
+  },
 });
 
 const perPageOptions = [

@@ -5,18 +5,18 @@ export const ss101formConfig = {
     formModel:{
         leaveStartTime: '',
         leaveEndTime: '',
-        type: 'regularLeave'
+        type: ''
     },
     groups:[
         {
             type: InputType.InputDate,
-            label: "請假時間起",
+            label: "查詢時間起",
             isFull: false,
             modelName: "leaveStartTime",
         },
         {
             type: InputType.InputDate,
-            label: "請假時間迄",
+            label: "查詢時間迄",
             isFull: false,
             modelName: "leaveEndTime",
         },
@@ -26,6 +26,10 @@ export const ss101formConfig = {
             isFull: false,
             modelName: "type",
             optionItem:[
+                {
+                    title: "全部",
+                    value: ""
+                },
                 {
                     title: Type.RegularLeave,
                     value: "regularLeave"
@@ -37,7 +41,7 @@ export const ss101formConfig = {
                 {
                     title: Type.Overtime,
                     value: "overtime"
-                },
+                }
             ],
         },
     ]

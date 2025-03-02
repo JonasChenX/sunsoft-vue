@@ -7,7 +7,8 @@
 export enum Type {
     RegularLeave = "請假-常用",
     SpecialLeave = "請假-特殊",
-    Overtime = "加班"
+    Overtime = "加班",
+    AnnualLeaveRequest = "申請時數"
 }
 
 export enum Category {
@@ -15,9 +16,11 @@ export enum Category {
     CasualLeave = "事假",
     PublicLeave = "公假",
     SickLeave = "病假",
-    AnnualLeave = "特休",
-    CompensatoryLeave = "補休",
     Absence = "曠職",
+
+    //常用請假 或 申請時數
+    AnnualLeave = "年假(特休)",
+    CompensatoryLeave = "補休",
 
     // 特殊請假
     MarriageLeave = "婚假",
@@ -39,6 +42,8 @@ export const getColorByType = (type : string) => {
         case Type.SpecialLeave:
             return 'red'
         case Type.Overtime:
+            return 'green'
+        case Type.AnnualLeaveRequest:
             return 'green'
     }
 }

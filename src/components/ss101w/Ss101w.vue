@@ -1,6 +1,7 @@
 <template>
   <div class="ma-5">
-    <v-container class="border-md">
+    <v-container class="border-md rounded">
+      <div class="text-h5 mb-3">申請紀錄查詢(特休/請假/加班)</div>
       <s-form
         ref="sFormRef"
         :formConfig="formConfig"
@@ -38,11 +39,10 @@
 <script setup lang="ts">
 import {ref, defineAsyncComponent, reactive} from 'vue';
 import { STableHeaderType } from "@/common/s-table/s-table-type";
-import { ss101TableHeader } from "@/components/ss101w/header-type";
-import { Ss101TableItemType, ss101TableItemsTest} from "@/components/ss101w/item-type";
+import { ss101TableHeader } from "@/components/ss101w/ss101-header-type";
+import { Ss101TableItemType, ss101TableItemsTest} from "@/components/ss101w/ss101-item-type";
 import { getColorByType } from "@/common/enum/leave-and-overtime";
 import {ss101formConfig} from "@/components/ss101w/ss101-form-config";
-import {formConfigTest} from "@/common/s-form/s-form-type";
 const STable = defineAsyncComponent(() => import('@/common/s-table/STable.vue'));
 const SForm = defineAsyncComponent(() => import('@/common/s-form/SForm.vue'));
 defineOptions({

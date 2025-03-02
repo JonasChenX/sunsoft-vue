@@ -15,13 +15,13 @@ export const ss101TableHeader : STableHeaderType[] = [
         align: 'center'
     },
     {
-        title: '請假時間',
-        key: 'leaveStartTime',
+        title: '申請時間',
+        key: 'leaveTime',
         sortable: false,
         align: 'center',
         children: [
-            { title: '起', value: 'leaveStartTime', align: 'center' },
-            { title: '迄', value: 'leaveEndTime', align: 'center' }
+            { title: '起', value: 'leaveTimeStart', align: 'center'},
+            { title: '迄', value: 'leaveTimeEnd', align: 'center' }
         ]
     },
     {
