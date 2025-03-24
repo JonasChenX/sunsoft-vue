@@ -20,8 +20,8 @@ export const ss101TableHeader : STableHeaderType[] = [
         sortable: false,
         align: 'center',
         children: [
-            { title: '起', value: 'leaveTimeStart', align: 'center'},
-            { title: '迄', value: 'leaveTimeEnd', align: 'center' }
+            { title: '起', value: 'leaveTimeStart', align: 'center', sortable: true},
+            { title: '迄', value: 'leaveTimeEnd', align: 'center', sortable: true }
         ]
     },
     {

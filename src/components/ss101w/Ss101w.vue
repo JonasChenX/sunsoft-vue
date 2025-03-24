@@ -22,7 +22,7 @@
           :headers="headers"
           :items="items"
           :isSelect="true"
-          :isFilter="true"
+          :isFilter="sTableState.isFilter"
           v-model:selected="sTableState.selected"
           :loading="sTableState.loading"
           v-model:search="sTableState.search"
@@ -37,45 +37,52 @@
     </v-container>
 </template>
 <script setup lang="ts">
-import {ref, defineAsyncComponent, reactive} from 'vue';
+import { ref, defineAsyncComponent, reactive } from 'vue';
 import { STableHeaderType } from "@/common/s-table/s-table-type";
 import { ss101TableHeader } from "@/components/ss101w/ss101-header-type";
-import { Ss101TableItemType, ss101TableItemsTest} from "@/components/ss101w/ss101-item-type";
+import { Ss101TableItemType} from "@/components/ss101w/ss101-item-type";
 import { getColorByType } from "@/common/enum/leave-and-overtime";
-import {ss101formConfig} from "@/components/ss101w/ss101-form-config";
+import { ss101formConfig } from "@/components/ss101w/ss101-form-config";
+import {SFormConfig, SFormFunction} from "@/common/s-form/s-form-type";
+import { queryApplicationRecords } from "@/components/ss101w/ss101w-api";
 const STable = defineAsyncComponent(() => import('@/common/s-table/STable.vue'));
 const SForm = defineAsyncComponent(() => import('@/common/s-form/SForm.vue'));
 defineOptions({
   name: "ss101w"
 });
 
-const sFormRef = ref(null)
+const sFormRef = ref<SFormFunction | null>(null)
 
 //表單設定檔
-const formConfig = reactive<any>(ss101formConfig)
+const formConfig : SFormConfig = reactive<any>(ss101formConfig)
 
 const headers = ref<STableHeaderType[]>([...ss101TableHeader])
 const items = ref<Ss101TableItemType[]>([]);
 
 const sTableState = reactive({
-    search: '',
-    selected: [],
-    loading: false,
-    isShow: false,
+  search: '',
+  selected: [],
+  loading: false,
+  isShow: false,
+  isFilter: true
 })
 
 const search = async (): Promise<void> => {
-    sTableState.loading = true
-    sTableState.isShow = true
+  sTableState.loading = true
+  sTableState.isShow = true
 
-    const getFormData = await sFormRef.value.getFormData()
-    console.log(getFormData)
+  sTableState.isFilter = false
+  sTableState.search = ''
+  sTableState.selected = []
 
-    setTimeout(() => {
-      sTableState.search = ''
-      sTableState.selected = []
-      sTableState.loading = false
-      items.value = [...ss101TableItemsTest]
-    }, 2000)
+  const getFormData = await sFormRef.value!.getFormData()
+
+  queryApplicationRecords(getFormData)
+    .then(({ data }: { data: Ss101TableItemType[] }) => {
+      items.value = data;
+      sTableState.isFilter = true;
+    }).finally(() => {
+      sTableState.loading = false;
+    })
 }
 </script>

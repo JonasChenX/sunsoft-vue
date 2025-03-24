@@ -1,8 +1,8 @@
-import {maxLength, required} from "@/common/s-form/vuelidate";
-import {InputType} from "@/common/s-form/input-type-enmu";
-import {FileAcceptType} from "@/common/s-form/file-accept-type";
+import { maxLength, required } from "@/common/s-form/vuelidate";
+import { InputType } from "@/common/s-form/input-type-enmu";
+import { FileAcceptType } from "@/common/s-form/file-accept-type";
 
-export interface FormGroupsItem {
+export interface SFormGroupsItemType {
     type: InputType;
     label: string;
     modelName: string;
@@ -10,27 +10,36 @@ export interface FormGroupsItem {
     maxLen?: number; //搭配inputText 限制長度
     placeholder?: string; //搭配inputText 提示內容
     textAreaContent?: string; //搭配checkbox 說明內容
-    optionItem?: FormItemOption[]; //搭配select、selectM 顯示內容
-    ticksItem?: FormItemTick; //搭配slider 顯示內容
+    optionItem?: SFormItemOption[]; //搭配select、selectM 顯示內容
+    ticksItem?: SFormItemTick; //搭配slider 顯示內容
     accept?: FileAcceptType[]; //搭配inputFile 限制檔案類型
     rows?: number; //搭配textArea 設定行數
-    validation?: FormValidation;
+    validation?: SFormValidation;
 }
 
-interface FormItemOption {
-    text: string;
+interface SFormItemOption {
+    title: string;
     value: any;
 }
 
-interface FormItemTick {
+interface SFormItemTick {
     [key: number]: string;
 }
 
-export interface FormValidation {
+export interface SFormValidation {
     [key: string]: any;
 }
 
-export const formConfigTest = {
+export interface SFormFunction {
+    getFormData: () => Promise<any>;
+}
+
+export interface SFormConfig {
+    formModel: Record<string, string | number | any[] | null>;
+    groups: SFormGroupsItemType[];
+}
+
+export const formConfigTest : SFormConfig = {
     formModel:{
         inputText1: 'A',
         inputDate1: '',
@@ -125,7 +134,7 @@ export const formConfigTest = {
             label: "自傳",
             isFull: true,
             modelName: "textArea1",
-            rows:"3",
+            rows: 3,
         },
         {
             type: InputType.Slider,

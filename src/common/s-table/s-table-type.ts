@@ -7,7 +7,12 @@ export interface STableHeaderType {
     key: string;
     title: string;
     sortable: boolean;
-    children?: any[];
-    align?: string;
+    children?: readonly {
+        title?: string | undefined;
+        value?: string | ((item: any) => string);
+        align?: ("start" | "end" | "center") | undefined;
+        sortable?: boolean | undefined;
+    }[],
+    align?: ("start" | "end" | "center") | undefined;
     value?: string | ((item: any) => string); // 讓 value 支援函式
 }
