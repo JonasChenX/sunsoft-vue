@@ -1,6 +1,5 @@
-// import axios from "axios";
+import axios from "axios";
 import '@/axios/axios-mock'
-import {axios} from "@/axios/axios-mock";
 
 //取得token
 export const getAuthenticate = (request : Record<string, string>): Promise<any> => {

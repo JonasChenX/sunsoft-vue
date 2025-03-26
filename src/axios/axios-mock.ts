@@ -8,10 +8,9 @@ export const validateAuthHeader = (config: AxiosRequestConfig, validToken: strin
 };
 
 import MockAdapter from "axios-mock-adapter";
+import {setupAccountAPIMock} from "@/core/login/account-api-mock";
+import {setupSs101APIMock} from "@/components/ss101w/ss101w-api-mock";
 export const apiMock = new MockAdapter(axios);
 
-
-
-import '@/components/ss101w/ss101w-api-mock'
-import '@/core/login/account-api-mock'
-export { axios };
+setupAccountAPIMock(apiMock, MOCK_URL);
+setupSs101APIMock(apiMock, MOCK_URL);
