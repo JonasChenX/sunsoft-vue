@@ -41,6 +41,8 @@
   </div>
 </template>
 <script setup lang="ts">
+import {inject} from "vue";
+
 defineOptions({
   name: "navbar"
 });
@@ -58,8 +60,15 @@ const pathHandler = (path: string) => {
 const PROJECT_NAME : string = import.meta.env.VITE_PROJECT_NAME;
 const PROJECT_VERSION : string = import.meta.env.VITE_PROJECT_VERSION;
 
+const accountService = inject<AccountService>('accountService');
+import { useAccountStore } from '@/store/account-store';
+import AccountService from "@/core/login/account-service"; // 根據實際的 store 檔案路徑
+const accountStore = useAccountStore();
 const logout = () => {
-  console.log('登出');
+  localStorage.removeItem(accountService?.authenticationTokenKey);
+  sessionStorage.removeItem(accountService?.authenticationTokenKey);
+  accountStore.logout();
+  router.push('/login');
 };
 </script>
 

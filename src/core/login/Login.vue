@@ -1,0 +1,76 @@
+<template>
+  <v-container fluid class="d-flex align-center justify-center h-screen pa-0  bg-primary">
+    <v-responsive class="flex-1-1 px-4" max-width="520px">
+      <v-img class="mx-auto mb-4" max-width="60" src="https://vuetifyjs.b-cdn.net/docs/images/logos/v.svg" contain />
+      <div class="text-h5 text-center mb-6 font-weight-medium">人事差勤管理系統</div>
+      <v-card class="pa-10 mb-8 elevation-3 rounded-lg" variant="elevated" :loading="isLoading">
+        <v-text-field
+            label="Email address"
+            variant="outlined"
+            class="mb-2"
+            rounded
+            v-model="formVModel.email"
+            :error-messages="$v.email?.$errors.map((e: any) => e.$message)"
+        ></v-text-field>
+        <v-text-field
+            label="Password"
+            type="password"
+            variant="outlined"
+            class="mb-2"
+            rounded
+            v-model="formVModel.password"
+            :error-messages="$v.password?.$errors.map((e: any) => e.$message)"
+        ></v-text-field>
+        <v-btn block class="bg-primary text-none" variant="elevated" @click="login" :loading="isLoading">Login</v-btn>
+      </v-card>
+    </v-responsive>
+  </v-container>
+</template>
+<script setup lang="ts">
+import {inject, reactive, ref} from "vue";
+import {email, minLength, required} from "@/common/s-form/vuelidate";
+import {useValidation} from "@/common/s-form/validations";
+import { getAuthenticate } from "@/core/login/account-api";
+import AccountService from "@/core/login/account-service";
+defineOptions({
+  name: "login"
+});
+
+const isLoading = ref<boolean>(false); // 新增載入狀態
+
+const accountService = inject<AccountService>('accountService');
+const login = async () => {
+  if(!await checkValidity()){
+    return;
+  }
+  isLoading.value = true; // 開始載入
+  getAuthenticate(formVModel)
+    .then(({data}) => {
+      const bearerToken = data;
+      if (bearerToken && bearerToken.slice(0, 7) === 'Bearer ') {
+        const jwt = bearerToken.slice(7, bearerToken.length);
+        sessionStorage.setItem(accountService?.authenticationTokenKey, jwt);
+        localStorage.removeItem(accountService?.authenticationTokenKey);
+      }
+      accountService?.retrieveAccount();
+    }).catch((error) => {
+      console.error("Login error:", error);
+    }).finally(()=>{
+      isLoading.value = false; // 結束載入
+    });
+};
+
+const form = {
+  email: "t@gmail.com",
+  password: "11111111",
+}
+
+const formVModel = reactive(form);
+
+const rules = {
+  email: { required, email },
+  password: { required, minLength: minLength(8) }
+};
+
+const {$v, checkValidity} = useValidation(rules, formVModel, form);
+</script>

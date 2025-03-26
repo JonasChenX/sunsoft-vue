@@ -81,6 +81,8 @@ const search = async (): Promise<void> => {
     .then(({ data }: { data: Ss101TableItemType[] }) => {
       items.value = data;
       sTableState.isFilter = true;
+    }).catch((e) => {
+    items.value = [];
     }).finally(() => {
       sTableState.loading = false;
     })
