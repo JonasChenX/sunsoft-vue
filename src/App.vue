@@ -3,6 +3,11 @@
     <Navbar></Navbar>
   </template>
   <router-view/>
+  <notifications
+      group="exe-notify"
+      position="bottom right"
+      :max="1"
+  />
 </template>
 <script setup lang="ts">
 import {computed, defineAsyncComponent} from 'vue';

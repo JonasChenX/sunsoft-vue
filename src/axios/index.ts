@@ -38,8 +38,8 @@ const setupAxiosInterceptors = (
         //若沒有授權或 token 過期，則登出並跳轉到登入頁面
         if (status === 403 || status === 401) {
             accountStore.logout();
+            sessionStorage.removeItem(accountStore.getAuthenticationTokenKey);
             router.push('/');
-            sessionStorage.removeItem(accountStore.getRequestedUrlKey);
             return onUnauthenticated(err);
         }
         if (status >= 500) {

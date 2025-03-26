@@ -32,6 +32,8 @@ import {email, minLength, required} from "@/common/s-form/vuelidate";
 import {useValidation} from "@/common/s-form/validations";
 import { getAuthenticate } from "@/core/login/account-api";
 import AccountService from "@/core/login/account-service";
+import { useNotify } from "@/common/notify/notify";
+const { successNotify,errorNotify }  = useNotify()
 defineOptions({
   name: "login"
 });
@@ -53,8 +55,9 @@ const login = async () => {
         localStorage.removeItem(accountService?.authenticationTokenKey);
       }
       accountService?.retrieveAccount();
+      successNotify("登入成功");
     }).catch((error) => {
-      console.error("Login error:", error);
+      errorNotify("登入失敗", error)
     }).finally(()=>{
       isLoading.value = false; // 結束載入
     });

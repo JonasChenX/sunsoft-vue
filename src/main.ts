@@ -5,6 +5,8 @@ import { createPinia } from 'pinia'
 import router from './router'
 //引入vuetify
 import vuetify from './vuetify'
+//引入Notifications
+import Notifications from '@kyvg/vue3-notification'
 
 //引入fontawesome
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -31,7 +33,8 @@ app.provide('accountService', accountService);
 
 app.use(vuetify)
     .use(pinia)
-    .use(router);
+    .use(router)
+    .use(Notifications);
 
 setupAxiosInterceptors(
     error => {
