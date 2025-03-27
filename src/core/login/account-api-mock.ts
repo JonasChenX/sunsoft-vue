@@ -28,7 +28,7 @@ export const setupAccountAPIMock = (apiMock: MockAdapter, MOCK_URL: string) => {
                     return;
                 }
                 resolve([200, { ...accountTypeTest }]);
-            }, 2000);
+            }, 4000);
         });
     });
 
@@ -40,7 +40,7 @@ export const setupAccountAPIMock = (apiMock: MockAdapter, MOCK_URL: string) => {
             }
             setTimeout(() => {
                 resolve([200, {}]);
-            }, 2000);
+            }, 1000);
         });
     });
 };

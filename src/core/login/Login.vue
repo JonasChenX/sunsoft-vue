@@ -42,25 +42,43 @@ const isLoading = ref<boolean>(false); // 新增載入狀態
 
 const accountService = inject<AccountService>('accountService');
 const login = async () => {
-  if(!await checkValidity()){
-    return;
-  }
-  isLoading.value = true; // 開始載入
-  getAuthenticate(formVModel)
-    .then(({data}) => {
-      const bearerToken = data;
-      if (bearerToken && bearerToken.slice(0, 7) === 'Bearer ') {
-        const jwt = bearerToken.slice(7, bearerToken.length);
-        sessionStorage.setItem(accountService?.authenticationTokenKey, jwt);
-        localStorage.removeItem(accountService?.authenticationTokenKey);
+  try {
+    // 檢查表單的有效性
+    if (!await checkValidity()) {
+      return;
+    }
+
+    isLoading.value = true; // 開始載入
+
+    // 獲取認證令牌
+    const { data: bearerToken } = await getAuthenticate(formVModel);
+
+    // 如果有 bearer token，存入 sessionStorage
+    if (bearerToken && bearerToken.slice(0, 7) === 'Bearer ') {
+      const jwt = bearerToken.slice(7);
+      sessionStorage.setItem(accountService?.authenticationTokenKey, jwt);
+      localStorage.removeItem(accountService?.authenticationTokenKey);
+    }
+
+    // 獲取帳戶資料並顯示成功通知
+    await accountService?.retrieveAccount();
+    successNotify("登入成功");
+
+  } catch (error : unknown) {
+    if (error instanceof Error) {
+      if ('response' in error && error.response instanceof Object && 'status' in error.response) {
+        const status = error.response.status;
+        if (status === 401) {
+          errorNotify("帳號或密碼錯誤");
+          return;
+        }
       }
-      accountService?.retrieveAccount();
-      successNotify("登入成功");
-    }).catch((error) => {
-      errorNotify("登入失敗", error)
-    }).finally(()=>{
-      isLoading.value = false; // 結束載入
-    });
+      errorNotify("登入失敗", error.message);
+    }
+  } finally {
+    // 結束載入
+    isLoading.value = false;
+  }
 };
 
 const form = {
