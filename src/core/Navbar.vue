@@ -41,7 +41,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import {inject} from "vue";
+import {inject, onMounted, ref, watch} from "vue";
 
 defineOptions({
   name: "navbar"
@@ -49,9 +49,10 @@ defineOptions({
 
 import { MenuItem } from "@/core/menu/menu";
 import { getMenu } from '@/core/menu/menu-service'
-const menus : MenuItem[] = getMenu();
-
 import { useRouter } from 'vue-router';
+import AccountService from "@/core/login/account-service"; // 根據實際的 store 檔案路徑
+import { useAccountStore } from '@/store/account-store';
+
 const router = useRouter();
 const pathHandler = (path: string) => {
   router.push(path);
@@ -61,9 +62,21 @@ const PROJECT_NAME : string = import.meta.env.VITE_PROJECT_NAME;
 const PROJECT_VERSION : string = import.meta.env.VITE_PROJECT_VERSION;
 
 const accountService = inject<AccountService>('accountService');
-import { useAccountStore } from '@/store/account-store';
-import AccountService from "@/core/login/account-service"; // 根據實際的 store 檔案路徑
 const accountStore = useAccountStore();
+
+const menus = ref<MenuItem[]>([]);
+onMounted(()=>{
+  menus.value = getMenu(accountStore)
+})
+
+//確保AuthoritiesList有變動時，重新取得menu
+watch(
+    () => accountService?.userAuthoritiesList,
+    () => {
+      menus.value = getMenu(accountStore)
+    }
+);
+
 const logout = () => {
   localStorage.removeItem(accountService?.authenticationTokenKey);
   sessionStorage.removeItem(accountService?.authenticationTokenKey);

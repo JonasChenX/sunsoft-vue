@@ -4,6 +4,8 @@ import router from "@/router";
 import {useNotify} from "@/common/notify/notify";
 
 const TIMEOUT = 1000000; // 設定請求的超時時間（單位為毫秒）
+const AUTHORIZATION_KEY = "Authorization"; // 設定 token 的 key
+const FUNCTION_ID_KEY = "X-FUNCTION-ID"; // 設定功能 ID 的 key
 
 const onRequestSuccess = (config: InternalAxiosRequestConfig<any>): InternalAxiosRequestConfig<any> => {
     const accountStore = useAccountStore();
@@ -12,11 +14,11 @@ const onRequestSuccess = (config: InternalAxiosRequestConfig<any>): InternalAxio
         if (!config.headers) {
             config.headers = new AxiosHeaders(); // 使用 AxiosHeaders 來初始化 headers
         }
-        config.headers.set('Authorization', `Bearer ${token}`);
+        config.headers.set(AUTHORIZATION_KEY, `Bearer ${token}`);
 
         const functionId = accountStore.getCurrentFunctionId;
         if (functionId) {
-            config.headers['X-FUNCTION-ID'] = functionId;
+            config.headers[FUNCTION_ID_KEY] = functionId;
         }
     }
     //設定請求的超時時間

@@ -197,7 +197,8 @@
         "meta":{
             "directory": false,
             "icon": "check-double",
-            "label": "打卡系統"
+            "label": "打卡系統",
+            "functionId": "SS001"
         },
         "path": "/ss001"
     }
