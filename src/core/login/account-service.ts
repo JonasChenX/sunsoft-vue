@@ -96,25 +96,11 @@ export default class AccountService implements AccountServiceInterface {
     }
 
     //檢核功能代號匹配的權限
-    public hasAnyAuthority(authorities: any): Promise<boolean> {
+    public hasAnyAuthority(functionId: string): Promise<boolean> {
         console.log("hasAnyAuthority");
-        if (typeof authorities === 'string') {
-            authorities = [authorities];
-        }
-        console.log(this.userAuthoritiesList)
-        for (let i = 0; i < authorities.length; i++) {
-            // 檢查當前使用者是否有此權限
-            if (this.userAuthoritiesList.includes(authorities[i])) {
-                // 若有匹配的權限，返回 Promise 並解決為 true
-                return new Promise(resolve => {
-                    resolve(true);
-                });
-            }
-        }
-        // 如果沒有匹配的權限
-        return new Promise(resolve => {
-            resolve(false);
-        });
+        return Promise.resolve(
+            this.userAuthoritiesList.some((auth: string) => auth.startsWith(functionId))
+        );
     }
 
     public get authenticated(): boolean {

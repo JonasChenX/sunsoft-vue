@@ -78,7 +78,7 @@ export const setupRouter = (router: Router, accountService: AccountService) => {
                     alert('請確定 Route 中的 meta.functionId 設定正確');
                     return next('/forbidden');
                 }
-                accountService.hasAnyAuthority(to.meta.functionId).then(hasAuthority => {
+                accountService.hasAnyAuthority(to.meta?.functionId as string).then(hasAuthority => {
                     if (!hasAuthority) {
                         return next('/forbidden');
                     }

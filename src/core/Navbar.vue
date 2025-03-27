@@ -41,17 +41,17 @@
   </div>
 </template>
 <script setup lang="ts">
-import { inject } from "vue";
-import { MenuItem } from "@/core/menu/menu";
-import { getMenu } from '@/core/menu/menu-service'
-import { useAccountStore } from '@/store/account-store';
-import AccountService from "@/core/login/account-service"; // 根據實際的 store 檔案路徑
-import { useRouter } from 'vue-router';
+import {inject, onMounted, ref, watch} from "vue";
+
 defineOptions({
   name: "navbar"
 });
 
-const menus : MenuItem[] = getMenu();
+import { MenuItem } from "@/core/menu/menu";
+import { getMenu } from '@/core/menu/menu-service'
+import { useRouter } from 'vue-router';
+import AccountService from "@/core/login/account-service"; // 根據實際的 store 檔案路徑
+import { useAccountStore } from '@/store/account-store';
 
 const router = useRouter();
 const pathHandler = (path: string) => {
@@ -63,6 +63,19 @@ const PROJECT_VERSION : string = import.meta.env.VITE_PROJECT_VERSION;
 
 const accountService = inject<AccountService>('accountService');
 const accountStore = useAccountStore();
+
+const menus = ref<MenuItem[]>([]);
+onMounted(()=>{
+  menus.value = getMenu(accountStore)
+})
+
+//確保AuthoritiesList有變動時，重新取得menu
+watch(
+    () => accountService?.userAuthoritiesList,
+    () => {
+      menus.value = getMenu(accountStore)
+    }
+);
 
 const logout = () => {
   localStorage.removeItem(accountService?.authenticationTokenKey);
