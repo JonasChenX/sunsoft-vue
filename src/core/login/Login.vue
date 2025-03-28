@@ -1,97 +1,35 @@
 <template>
-  <v-container fluid class="d-flex align-center justify-center h-screen pa-0  bg-primary">
-    <v-responsive class="flex-1-1 px-4" max-width="520px">
-      <v-img class="mx-auto mb-4" max-width="60" src="https://vuetifyjs.b-cdn.net/docs/images/logos/v.svg" contain />
-      <div class="text-h5 text-center mb-6 font-weight-medium">人事差勤管理系統</div>
-      <v-card class="pa-10 mb-8 elevation-3 rounded-lg" variant="elevated" :loading="isLoading">
-        <v-text-field
-            label="Email address"
-            variant="outlined"
-            class="mb-2"
-            rounded
-            v-model="formVModel.email"
-            :error-messages="$v.email?.$errors.map((e: any) => e.$message)"
-        ></v-text-field>
-        <v-text-field
-            label="Password"
-            type="password"
-            variant="outlined"
-            class="mb-2"
-            rounded
-            v-model="formVModel.password"
-            :error-messages="$v.password?.$errors.map((e: any) => e.$message)"
-        ></v-text-field>
-        <v-btn block class="bg-primary text-none" variant="elevated" @click="login" :loading="isLoading">Login</v-btn>
-      </v-card>
-    </v-responsive>
-  </v-container>
+  <component :is="loginView"></component>
 </template>
 <script setup lang="ts">
-import {inject, reactive, ref} from "vue";
-import {email, minLength, required} from "@/common/s-form/vuelidate";
-import {useValidation} from "@/common/s-form/validations";
-import { getAuthenticate } from "@/core/login/account-api";
 import AccountService from "@/core/login/account-service";
-import { useNotify } from "@/common/notify/notify";
-const { successNotify,errorNotify }  = useNotify()
-defineOptions({
-  name: "login"
-});
+import {inject, onMounted, shallowRef} from "vue";
+import {useAccountStore} from "@/store/account-store";
+import ProdLoginForm from './PropLogin.vue';
+import DevLoginForm from './DevLogin.vue';
+import {useAppStateStore} from "@/store/app-state-store";
+const loginView = shallowRef<typeof ProdLoginForm | typeof DevLoginForm | null>(null);
 
-const isLoading = ref<boolean>(false); // 新增載入狀態
+const accountStore = useAccountStore();
+const appStateStore = useAppStateStore();
 
-const accountService = inject<AccountService>('accountService');
-const login = async () => {
-  try {
-    // 檢查表單的有效性
-    if (!await checkValidity()) {
-      return;
-    }
+onMounted(() => {
 
-    isLoading.value = true; // 開始載入
-
-    // 獲取認證令牌
-    const { data: bearerToken } = await getAuthenticate(formVModel);
-
-    // 如果有 bearer token，存入 sessionStorage
-    if (bearerToken && bearerToken.slice(0, 7) === 'Bearer ') {
-      const jwt = bearerToken.slice(7);
-      sessionStorage.setItem(accountService?.authenticationTokenKey, jwt);
-      localStorage.removeItem(accountService?.authenticationTokenKey);
-    }
-
-    // 獲取帳戶資料並顯示成功通知
-    await accountService?.retrieveAccount();
-    successNotify("登入成功");
-
-  } catch (error : unknown) {
-    if (error instanceof Error) {
-      if ('response' in error && error.response instanceof Object && 'status' in error.response) {
-        const status = error.response.status;
-        if (status === 401) {
-          errorNotify("帳號或密碼錯誤");
-          return;
-        }
-      }
-      errorNotify("登入失敗", error.message);
-    }
-  } finally {
-    // 結束載入
-    isLoading.value = false;
+  const accountService = inject<AccountService>('accountService');
+  if(!accountService){
+    loginView.value = ProdLoginForm;
+    return;
   }
-};
-
-const form = {
-  email: "t@gmail.com",
-  password: "11111111",
-}
-
-const formVModel = reactive(form);
-
-const rules = {
-  email: { required, email },
-  password: { required, minLength: minLength(8) }
-};
-
-const {$v, checkValidity} = useValidation(rules, formVModel, form);
+  appStateStore.viewLoadingStart()
+  accountService.retrieveProfiles().then(() => {
+    const activeProfiles: string = accountStore.getActiveProfiles || "";
+    if(activeProfiles == "dev"){
+      loginView.value = DevLoginForm;
+      return
+    }
+    loginView.value = ProdLoginForm;
+  }).finally(() => {
+    appStateStore.viewLoadingEnd()
+  });
+})
 </script>

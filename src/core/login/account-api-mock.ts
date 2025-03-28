@@ -15,7 +15,7 @@ export const setupAccountAPIMock = (apiMock: MockAdapter, MOCK_URL: string) => {
     apiMock.onGet(`${MOCK_URL}/profiles`).reply((config: AxiosRequestConfig) => {
         return new Promise((resolve) => {
             setTimeout(() => {
-                resolve([200, { activeProfiles: ['prod'] }]);
+                resolve([200, { activeProfiles: 'dev' }]);
             }, 2000);
         });
     });

@@ -14,7 +14,7 @@ export const useAccountStore = defineStore('account', {
         logon: false,
         userIdentity: null,
         authenticated: false,
-        activeProfiles: '',
+        activeProfiles: 'prod',
         currentFunctionId: '',
     }),
     getters: {

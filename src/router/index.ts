@@ -50,10 +50,12 @@ export const setupRouter = (router: Router, accountService: AccountService) => {
             return next();
         }
 
-        // 設定 1 秒後才執行 viewLoadingStart
-        loadingTimeout = setTimeout(() => {
-            appStateStore.viewLoadingStart();
-        }, 1000);
+        if(to.path !== '/login'){
+            // 設定 1 秒後才執行 viewLoadingStart
+            loadingTimeout = setTimeout(() => {
+                appStateStore.viewLoadingStart();
+            }, 1000);
+        }
 
         routeGuard(to, from, next);
     })
@@ -72,8 +74,8 @@ export const setupRouter = (router: Router, accountService: AccountService) => {
             return next('/not-found');
         }
 
-        if (to.path === '/login' || to.path === '/forbidden' || to.path === '/not-found') {
-            if (sessionStorage.getItem(accountStore.getRequestedUrlKey) === null && to.path !== '/forbidden') {
+        if (to.path === '/login') {
+            if (sessionStorage.getItem(accountStore.getRequestedUrlKey) === null) {
                 sessionStorage.setItem(accountStore.getRequestedUrlKey, to.fullPath);
             }
             return next();
