@@ -7,6 +7,7 @@ import ss01 from '@/router/ss01'
 import { useAccountStore } from "@/store/account-store";
 import { writeFunctionUsageLog } from "@/core/login/account-api";
 import AccountService from "@/core/login/account-service";
+import { useAppStateStore } from "@/store/app-state-store";
 const routes = [
     {
         path: '/login',
@@ -41,17 +42,31 @@ const router = createRouter({
 })
 
 export const setupRouter = (router: Router, accountService: AccountService) => {
+    const appStateStore = useAppStateStore();
 
+    let loadingTimeout: ReturnType<typeof setTimeout>;
     router.beforeEach((to, from, next) => {
         if (to.path === '/forbidden' || to.path === '/not-found' || to.path === '/error') {
             return next();
         }
-        routeGuard(to, from, next)
+
+        if(to.path !== '/login'){
+            // 設定 1 秒後才執行 viewLoadingStart
+            loadingTimeout = setTimeout(() => {
+                appStateStore.viewLoadingStart();
+            }, 1000);
+        }
+
+        routeGuard(to, from, next);
+    })
+
+    router.afterEach(()=>{
+        clearTimeout(loadingTimeout);
+        appStateStore.viewLoadingEnd()
     })
 
     const routeGuard = (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
         const accountStore = useAccountStore();
-
         if (to.path !== from.path) {
             accountStore.setCurrentFunctionId('');
         }
@@ -59,10 +74,7 @@ export const setupRouter = (router: Router, accountService: AccountService) => {
             return next('/not-found');
         }
 
-        if (to.path === '/login' || to.path === '/forbidden' || to.path === '/not-found') {
-            if (sessionStorage.getItem(accountStore.getRequestedUrlKey) === null && to.path !== '/forbidden') {
-                sessionStorage.setItem(accountStore.getRequestedUrlKey, to.fullPath);
-            }
+        if (to.path === '/login') {
             return next();
         } else {
             accountService.checkAuth().then(authenticated => {
