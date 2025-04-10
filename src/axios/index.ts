@@ -1,17 +1,18 @@
-import axios from 'axios';
+import axios, {AxiosHeaders, InternalAxiosRequestConfig} from 'axios';
 import { useAccountStore } from '@/store/account-store';
 import router from "@/router";
+import { useNotify } from "@/common/notify/notify";
 
 const TIMEOUT = 1000000; // 設定請求的超時時間（單位為毫秒）
 
-const onRequestSuccess = (config: any) => {
+const onRequestSuccess = (config: InternalAxiosRequestConfig<any>): InternalAxiosRequestConfig<any> => {
     const accountStore = useAccountStore();
     const token = localStorage.getItem(accountStore.getAuthenticationTokenKey) || sessionStorage.getItem(accountStore.getAuthenticationTokenKey);
     if (token) {
         if (!config.headers) {
-            config.headers = {};
+            config.headers = new AxiosHeaders(); // 使用 AxiosHeaders 來初始化 headers
         }
-        config.headers.Authorization = `Bearer ${token}`;
+        config.headers.set('Authorization', `Bearer ${token}`);
 
         const functionId = accountStore.getCurrentFunctionId;
         if (functionId) {
@@ -29,20 +30,25 @@ const setupAxiosInterceptors = (
     onUnauthenticated: (err: any) => Promise<any> | void,  // 用來處理未授權錯誤（如 token 過期）
     onServerError: (err: any) => Promise<any> | void       // 用來處理伺服器錯誤（如 500 錯誤）
 ) => {
+    const { errorNotify }  = useNotify()
     const onResponseError = (err : any) => {
         const accountStore = useAccountStore();
-        // 日誌打印錯誤詳細內容
-        console.log('err', JSON.parse(JSON.stringify(err)));
         // 獲取錯誤的狀態碼
         const status = err.status || err.response?.status;
         //若沒有授權或 token 過期，則登出並跳轉到登入頁面
         if (status === 403 || status === 401) {
+            if (err.config?.isShowNotify) {
+                errorNotify("沒有授權請重新登入", err.message);
+            }
             accountStore.logout();
-            router.push('/');
-            sessionStorage.removeItem(accountStore.getRequestedUrlKey);
+            sessionStorage.removeItem(accountStore.getAuthenticationTokenKey);
+            router.push('/login');
             return onUnauthenticated(err);
         }
         if (status >= 500) {
+            if (err.config?.isShowNotify) {
+                errorNotify("執行失敗", err.message);
+            }
             return onServerError(err);
         }
         return Promise.reject(err);
@@ -55,6 +61,10 @@ const setupAxiosInterceptors = (
         // 在收到回應之後，使用 onResponseError 攔截器來處理錯誤
         axios.interceptors.response.use(res => res, onResponseError);
     }
+};
+
+export const isShowNotifyConfig: any = {
+    isShowNotify: true,
 };
 
 export { onRequestSuccess, setupAxiosInterceptors };

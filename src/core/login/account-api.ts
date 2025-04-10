@@ -1,5 +1,6 @@
 import axios from "axios";
 import '@/axios/axios-mock'
+import {isShowNotifyConfig} from "@/axios";
 
 //取得token
 export const getAuthenticate = (request : Record<string, string>): Promise<any> => {
@@ -13,12 +14,12 @@ export const getProfiles = (): Promise<any> => {
 
 //取得使用者資訊
 export const getAccount = (): Promise<any> => {
-    return axios.get('/mock/api/account');
+    return axios.get('/mock/api/account', isShowNotifyConfig);
 }
 
 //紀錄功能使用量
 export const writeFunctionUsageLog = () => {
-    return axios.post('/mock/api/writeFunctionUsageLog');
+    return axios.post('/mock/api/writeFunctionUsageLog',{});
 }
 
 
