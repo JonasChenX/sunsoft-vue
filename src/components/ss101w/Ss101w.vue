@@ -81,6 +81,8 @@ const search = async (): Promise<void> => {
   queryApplicationRecords(getFormData)
     .then(({ data }: { data: Ss101TableItemType[] }) => {
       items.value = data;
+    }).catch((e) => {
+      items.value = [];
     }).finally(() => {
       sTableState.loading = false;
     })

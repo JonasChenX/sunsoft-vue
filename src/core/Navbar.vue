@@ -41,15 +41,18 @@
   </div>
 </template>
 <script setup lang="ts">
+import { inject } from "vue";
+import { MenuItem } from "@/core/menu/menu";
+import { getMenu } from '@/core/menu/menu-service'
+import { useAccountStore } from '@/store/account-store';
+import AccountService from "@/core/login/account-service"; // 根據實際的 store 檔案路徑
+import { useRouter } from 'vue-router';
 defineOptions({
   name: "navbar"
 });
 
-import { MenuItem } from "@/core/menu/menu";
-import { getMenu } from '@/core/menu/menu-service'
 const menus : MenuItem[] = getMenu();
 
-import { useRouter } from 'vue-router';
 const router = useRouter();
 const pathHandler = (path: string) => {
   router.push(path);
@@ -58,8 +61,14 @@ const pathHandler = (path: string) => {
 const PROJECT_NAME : string = import.meta.env.VITE_PROJECT_NAME;
 const PROJECT_VERSION : string = import.meta.env.VITE_PROJECT_VERSION;
 
+const accountService = inject<AccountService>('accountService');
+const accountStore = useAccountStore();
+
 const logout = () => {
-  console.log('登出');
+  localStorage.removeItem(accountService?.authenticationTokenKey);
+  sessionStorage.removeItem(accountService?.authenticationTokenKey);
+  accountStore.logout();
+  router.push('/login');
 };
 </script>
 
