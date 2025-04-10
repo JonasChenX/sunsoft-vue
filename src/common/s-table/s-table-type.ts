@@ -15,4 +15,5 @@ export interface STableHeaderType {
     }[],
     align?: ("start" | "end" | "center") | undefined;
     value?: string | ((item: any) => string); // 讓 value 支援函式
+    visibleByRemove?: boolean; //是否不可被移除 (預設為true)
 }

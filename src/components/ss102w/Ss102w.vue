@@ -18,47 +18,43 @@
     </div>
     <v-container class="mb-5">
         <template v-if="sTableState.isShow">
-            <div class="border-md rounded">
-                <s-table
-                    :headers="headers"
-                    :items="items"
-                    :isSelect="false"
-                    :isFilter="false"
-                    :loading="sTableState.loading"
-                    :isHideFooter="true"
-                >
-                    <template v-slot:item.annualLeaveRemaining="{ item }">
-                        <v-chip v-if="item.annualLeaveRemaining" :color="'green'">
-                            {{ item.annualLeaveRemaining }}
-                        </v-chip>
-                    </template>
-                    <template v-slot:item.compensatoryLeaveRemaining="{ item }">
-                        <v-chip v-if="item.compensatoryLeaveRemaining" :color="'green'">
-                            {{ item.compensatoryLeaveRemaining }}
-                        </v-chip>
-                    </template>
-                </s-table>
-            </div>
+            <s-table
+                :headers="headers"
+                :items="items"
+                :isSelect="false"
+                :isFilter="false"
+                :loading="sTableState.loading"
+                :isHideFooter="true"
+            >
+                <template v-slot:item.annualLeaveRemaining="{ item }">
+                    <v-chip v-if="item.annualLeaveRemaining" :color="'green'">
+                        {{ item.annualLeaveRemaining }}
+                    </v-chip>
+                </template>
+                <template v-slot:item.compensatoryLeaveRemaining="{ item }">
+                    <v-chip v-if="item.compensatoryLeaveRemaining" :color="'green'">
+                        {{ item.compensatoryLeaveRemaining }}
+                    </v-chip>
+                </template>
+            </s-table>
         </template>
     </v-container>
     <v-container class="mb-5">
         <template v-if="sTableState.isShow">
-            <div class="border-md rounded">
-                <s-table
-                    :headers="headersB"
-                    :items="itemsB"
-                    :isSelect="true"
-                    :isFilter="true"
-                    :loading="sTableState.loading"
-                    :isHideFooter="false"
-                >
-                    <template v-slot:item.hours="{ item }">
-                        <v-chip v-if="item.hours" :color="getColorByType(item.type)">
-                            {{ item.hours }}
-                        </v-chip>
-                    </template>
-                </s-table>
-            </div>
+            <s-table
+                :headers="headersB"
+                :items="itemsB"
+                :isSelect="true"
+                :isFilter="true"
+                :loading="sTableState.loading"
+                :isHideFooter="false"
+            >
+                <template v-slot:item.hours="{ item }">
+                    <v-chip v-if="item.hours" :color="getColorByType(item.type)">
+                        {{ item.hours }}
+                    </v-chip>
+                </template>
+            </s-table>
         </template>
     </v-container>
 </template>

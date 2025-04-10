@@ -23,6 +23,7 @@
           :items="items"
           :isSelect="true"
           :isFilter="sTableState.isFilter"
+          :isSortHeaders="sTableState.isSortHeaders"
           v-model:selected="sTableState.selected"
           :loading="sTableState.loading"
           v-model:search="sTableState.search"
@@ -64,14 +65,14 @@ const sTableState = reactive({
   selected: [],
   loading: false,
   isShow: false,
-  isFilter: true
+  isFilter: true,
+  isSortHeaders: true
 })
 
 const search = async (): Promise<void> => {
   sTableState.loading = true
   sTableState.isShow = true
 
-  sTableState.isFilter = false
   sTableState.search = ''
   sTableState.selected = []
 
@@ -80,7 +81,6 @@ const search = async (): Promise<void> => {
   queryApplicationRecords(getFormData)
     .then(({ data }: { data: Ss101TableItemType[] }) => {
       items.value = data;
-      sTableState.isFilter = true;
     }).finally(() => {
       sTableState.loading = false;
     })

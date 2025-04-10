@@ -6,7 +6,8 @@ export const ss101TableHeader : STableHeaderType[] = [
         title: '類型',
         key: 'type',
         sortable: true,
-        align: 'center'
+        align: 'center',
+        visibleByRemove: false
     },
     {
         title: '種類',
@@ -19,6 +20,7 @@ export const ss101TableHeader : STableHeaderType[] = [
         key: 'leaveTime',
         sortable: false,
         align: 'center',
+        visibleByRemove: false,
         children: [
             { title: '起', value: 'leaveTimeStart', align: 'center', sortable: true},
             { title: '迄', value: 'leaveTimeEnd', align: 'center', sortable: true }
