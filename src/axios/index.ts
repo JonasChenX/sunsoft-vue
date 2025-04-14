@@ -46,9 +46,6 @@ const setupAxiosInterceptors = (
             return onUnauthenticated(err);
         }
         if (status >= 500) {
-            if (err.config?.isShowNotify) {
-                errorNotify("執行失敗", err.message);
-            }
             return onServerError(err);
         }
         return Promise.reject(err);
@@ -61,10 +58,6 @@ const setupAxiosInterceptors = (
         // 在收到回應之後，使用 onResponseError 攔截器來處理錯誤
         axios.interceptors.response.use(res => res, onResponseError);
     }
-};
-
-export const isShowNotifyConfig: any = {
-    isShowNotify: true,
 };
 
 export { onRequestSuccess, setupAxiosInterceptors };

@@ -51,18 +51,28 @@ const login = async () => {
     isLoading.value = true; // 開始載入
 
     // 獲取認證令牌
-    const { data: bearerToken } = await getAuthenticate(formVModel);
+    const { data } = await getAuthenticate(formVModel);
+    const bearerToken = data ?? '';
 
     // 如果有 bearer token，存入 sessionStorage
-    if (bearerToken && bearerToken.slice(0, 7) === 'Bearer ') {
-      const jwt = bearerToken.slice(7);
-      sessionStorage.setItem(accountService?.authenticationTokenKey, jwt);
-      localStorage.removeItem(accountService?.authenticationTokenKey);
+    if (bearerToken.startsWith('Bearer ')) {
+      const jwt = bearerToken.substring(7);
+      const key = accountService?.authenticationTokenKey;
+
+      if (key) {
+        sessionStorage.setItem(key, jwt);
+        localStorage.removeItem(key);
+      }
     }
 
     // 獲取帳戶資料並顯示成功通知
-    await accountService?.retrieveAccount();
-    successNotify("登入成功");
+    await accountService?.retrieveAccount().then((isSuccess)=>{
+      if(!isSuccess){
+        errorNotify("登入失敗");
+        return
+      }
+      successNotify("登入成功");
+    })
 
   } catch (error : unknown) {
     if (error instanceof Error) {

@@ -15,5 +15,14 @@ export default defineConfig({
   define: {
     '__VUE_PROD_HYDRATION_MISMATCH_DETAILS__': false, // 設為 true 可開啟更多 hydration debug 資訊
     __APP_VERSION__: JSON.stringify(require("./package.json").version),
+  },
+  server: {
+    proxy: {
+      '/sunsoft/api': {
+        target: 'http://localhost:8089',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/sunsoft\/api/, '/sunsoft/api')
+      }
+    }
   }
 })
