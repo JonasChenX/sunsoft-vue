@@ -7,7 +7,7 @@ const BASE_URL = IS_OPEN_MOCK ? "/mock" : "/sunsoft";
 
 //取得token
 export const getAuthenticate = (request : Record<string, string>): Promise<any> => {
-    return axios.post(`${BASE_URL}/api/authenticate`, { params: request });
+    return axios.post(`${BASE_URL}/api/authenticate`, request);
 };
 
 //取得環境資訊

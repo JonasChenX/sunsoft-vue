@@ -32,14 +32,34 @@ app.use(vuetify)
     .use(router)
     .use(Notifications);
 
+const HEADER_INFO_KEY = "x-ss-info-alert";
+const HEADER_ERROR_KEY = "x-ss-error-alert";
+import { useNotify } from "@/common/notify/notify";
+import {useAccountStore} from "@/store/account-store";
+const { errorNotify, successNotify }  = useNotify()
+const accountStore = useAccountStore();
 setupAxiosInterceptors(
     error => {
-        console.log('Unauthorized!');
+        errorNotify("沒有授權請重新登入", error.message);
+        accountStore.logout();
+        sessionStorage.removeItem(accountStore.getAuthenticationTokenKey);
+        router.push('/login');
         return Promise.reject(error);
     },
     error => {
-        console.log('Server error!');
+        const { response } = error;
+        const errorMessage = response.headers?.[HEADER_ERROR_KEY];
+        if (errorMessage) {
+            errorNotify(decodeURIComponent(errorMessage));
+        }
         return Promise.reject(error);
+    },
+    res => {
+        const infoMessage = res.headers?.[HEADER_INFO_KEY];
+        if (infoMessage) {
+            successNotify(decodeURIComponent(infoMessage));
+        }
+        return Promise.resolve(res)
     }
 );
 

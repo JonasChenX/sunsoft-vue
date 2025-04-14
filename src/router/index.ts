@@ -44,25 +44,22 @@ const router = createRouter({
 export const setupRouter = (router: Router, accountService: AccountService) => {
     const appStateStore = useAppStateStore();
 
-    let loadingTimeout: ReturnType<typeof setTimeout>;
     router.beforeEach((to, from, next) => {
         if (to.path === '/forbidden' || to.path === '/not-found' || to.path === '/error') {
             return next();
         }
 
         if(to.path !== '/login'){
-            // 設定 1 秒後才執行 viewLoadingStart
-            loadingTimeout = setTimeout(() => {
-                appStateStore.viewLoadingStart();
-            }, 1000);
+            appStateStore.viewLoadingStart();
         }
 
-        routeGuard(to, from, next);
+         routeGuard(to, from, next);
     })
 
     router.afterEach(()=>{
-        clearTimeout(loadingTimeout);
-        appStateStore.viewLoadingEnd()
+        setTimeout(() => {
+            appStateStore.viewLoadingEnd();
+        }, 300); // 設定一個短暫的延遲，確保 loading 效果明顯
     })
 
     const routeGuard = (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {

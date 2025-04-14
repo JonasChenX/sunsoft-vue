@@ -32,8 +32,6 @@ import {email, minLength, required} from "@/common/s-form/vuelidate";
 import {useValidation} from "@/common/s-form/validations";
 import { getAuthenticate } from "@/core/login/account-api";
 import AccountService from "@/core/login/account-service";
-import { useNotify } from "@/common/notify/notify";
-const { successNotify,errorNotify }  = useNotify()
 defineOptions({
   name: "login"
 });
@@ -66,25 +64,8 @@ const login = async () => {
     }
 
     // 獲取帳戶資料並顯示成功通知
-    await accountService?.retrieveAccount().then((isSuccess)=>{
-      if(!isSuccess){
-        errorNotify("登入失敗");
-        return
-      }
-      successNotify("登入成功");
-    })
+    await accountService?.retrieveAccount();
 
-  } catch (error : unknown) {
-    if (error instanceof Error) {
-      if ('response' in error && error.response instanceof Object && 'status' in error.response) {
-        const status = error.response.status;
-        if (status === 401) {
-          errorNotify("帳號或密碼錯誤");
-          return;
-        }
-      }
-      errorNotify("登入失敗", error.message);
-    }
   } finally {
     // 結束載入
     isLoading.value = false;
