@@ -30,8 +30,9 @@
 import {inject, reactive, ref} from "vue";
 import {email, minLength, required} from "@/common/s-form/vuelidate";
 import {useValidation} from "@/common/s-form/validations";
-import { getAuthenticate } from "@/core/login/account-api";
+import {getAuthenticate, getPublicKey} from "@/core/login/account-api";
 import AccountService from "@/core/login/account-service";
+import {JSEncrypt} from "jsencrypt";
 defineOptions({
   name: "login"
 });
@@ -48,9 +49,20 @@ const login = async () => {
 
     isLoading.value = true; // 開始載入
 
+    const { headers: publicKeyHeader } = await getPublicKey()
+    const publicKey = publicKeyHeader['publickey'] ?? '';
+
+    const encryptor = new JSEncrypt();
+    encryptor.setPublicKey(publicKey);
+
+    const request = {
+      email: formVModel.email,
+      password: String(encryptor.encrypt(formVModel.password))
+    };
+
     // 獲取認證令牌
-    const { headers } = await getAuthenticate(formVModel);
-    const bearerToken = headers.authorization ?? '';
+    const { headers: tokenHeader } = await getAuthenticate(request);
+    const bearerToken = tokenHeader.authorization ?? '';
 
     // 如果有 bearer token，存入 sessionStorage
     if (bearerToken.startsWith('Bearer ')) {

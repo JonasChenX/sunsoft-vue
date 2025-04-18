@@ -17,6 +17,7 @@
     "axios": "^1.8.4",
     "axios-auth-refresh": "^3.3.6",
     "axios-mock-adapter": "^2.1.0",
+    "jsencrypt": "^3.3.2",
     "pinia": "^3.0.1",
     "vue": "^3.2.37",
     "vue-draggable-next": "^2.2.1",
