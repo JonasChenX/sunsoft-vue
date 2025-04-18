@@ -22,7 +22,7 @@ export const getAccount = (): Promise<any> => {
 
 //紀錄功能使用量
 export const writeFunctionUsageLog = () => {
-    return axios.post(`${BASE_URL}/api/writeFunctionUsageLog`,{});
+    return axios.get(`${BASE_URL}/api/writeFunctionUsageLog`);
 }
 
 

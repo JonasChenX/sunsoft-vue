@@ -49,8 +49,8 @@ const login = async () => {
     isLoading.value = true; // 開始載入
 
     // 獲取認證令牌
-    const { data } = await getAuthenticate(formVModel);
-    const bearerToken = data ?? '';
+    const { headers } = await getAuthenticate(formVModel);
+    const bearerToken = headers.authorization ?? '';
 
     // 如果有 bearer token，存入 sessionStorage
     if (bearerToken.startsWith('Bearer ')) {
