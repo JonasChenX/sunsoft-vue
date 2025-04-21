@@ -40,7 +40,11 @@ const { errorNotify, successNotify }  = useNotify()
 const accountStore = useAccountStore();
 setupAxiosInterceptors(
     error => {
-        errorNotify("沒有授權請重新登入", error.message);
+        const { response } = error;
+        const errorMessage = response.headers?.[HEADER_ERROR_KEY];
+        if (errorMessage) {
+            errorNotify(decodeURIComponent(errorMessage));
+        }
         accountStore.logout();
         sessionStorage.removeItem(accountStore.getAuthenticationTokenKey);
         router.push('/login');
