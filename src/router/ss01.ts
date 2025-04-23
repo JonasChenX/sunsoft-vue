@@ -1,3 +1,4 @@
+const SS001 = () => import('@/components/ss001w/Ss001w.vue')
 const SS101 = () => import('@/components/ss101w/Ss101w.vue')
 const SS102 = () => import('@/components/ss102w/Ss102w.vue')
 const SS103 = () => import('@/components/ss103w/Ss103w.vue')
@@ -5,6 +6,16 @@ const SS104 = () => import('@/components/ss104w/Ss104w.vue')
 const SS105 = () => import('@/components/ss105w/Ss105w.vue')
 
 export default [
+    {
+        name: 'ss001',
+        path: '/ss001',
+        component: SS001,
+        meta: {
+            functionId: 'SS101',
+            label: '打卡系統',
+            requiresAuth: true
+        },
+    },
     {
         name: 'ss101',
         path: '/ss101',

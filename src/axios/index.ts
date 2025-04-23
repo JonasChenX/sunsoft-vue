@@ -29,7 +29,7 @@ const onRequestSuccess = (config: InternalAxiosRequestConfig<any>): InternalAxio
 const setupAxiosInterceptors = (
     onUnauthenticated: (err: any) => Promise<any> | void,  // 用來處理未授權錯誤（如 token 過期）
     onServerError: (err: any) => Promise<any> | void,       // 用來處理伺服器錯誤（如 500 錯誤）
-    onResponseInfo: (res: any) => Promise<any> | void,       // 用來處理伺服器錯誤（如 500 錯誤）
+    onResponseInfo: (res: any) => Promise<any> | void,       // 用來處理回傳訊息
 ) => {
     const onResponseError = (err : any) => {
         // 獲取錯誤的狀態碼
