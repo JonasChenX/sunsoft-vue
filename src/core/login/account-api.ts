@@ -10,11 +10,6 @@ export const getAuthenticate = (request : Record<string, string>): Promise<any> 
     return axios.post(`${BASE_URL}/api/authenticate`, request);
 };
 
-//取得token
-export const getPublicKey = (): Promise<any> => {
-    return axios.get(`${BASE_URL}/api/public-key`);
-};
-
 //取得環境資訊
 export const getProfiles = (): Promise<any> => {
     return axios.get(`${BASE_URL}/api/profiles`);

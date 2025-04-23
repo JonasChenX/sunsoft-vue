@@ -33,12 +33,14 @@ export default class AccountService implements AccountServiceInterface {
 
     //取得 環境資訊
     public retrieveProfiles(): Promise<boolean> {
-        console.log("retrieveProfiles");
         return new Promise(resolve => {
             getProfiles()
-                .then(({ data }) => {
+                .then(({ data, headers }) => {
                     if (data?.activeProfiles) {
                         this.accountStore.setActiveProfiles(data['activeProfiles']);
+                    }
+                    if(headers?.['x-enc-auth']){
+                        this.accountStore.setPKey(headers['x-enc-auth']);
                     }
                     resolve(true);
                 })
@@ -48,12 +50,10 @@ export default class AccountService implements AccountServiceInterface {
 
     //取得 使用者資訊
     public retrieveAccount(): Promise<boolean> {
-        console.log("retrieveAccount");
         return new Promise(resolve => {
             getAccount().then(({ data }) => {
                 this.accountStore.authenticate();
                 const account = data;
-                console.log(account)
                 if (account) {
                     this.accountStore.setAuthenticated(account);
                     const requestedUrl = sessionStorage.getItem(this.requestedUrlKey);
@@ -83,7 +83,6 @@ export default class AccountService implements AccountServiceInterface {
 
     //檢核權限
     public checkAuth(): Promise<boolean> {
-        console.log("checkAuth");
         if (!this.authenticated || !this.userAuthoritiesList) {
             const token = localStorage.getItem(this.authenticationTokenKey) || sessionStorage.getItem(this.authenticationTokenKey);
             if (!this.accountStore.getAccount && !this.accountStore.isLogon && token) {
@@ -97,7 +96,6 @@ export default class AccountService implements AccountServiceInterface {
 
     //檢核功能代號匹配的權限
     public hasAnyAuthority(functionId: string): Promise<boolean> {
-        console.log("hasAnyAuthority");
         return Promise.resolve(
             this.userAuthoritiesList.some((auth: string) => auth.startsWith(functionId))
         );

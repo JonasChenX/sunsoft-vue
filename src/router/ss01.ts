@@ -11,7 +11,7 @@ export default [
         path: '/ss001',
         component: SS001,
         meta: {
-            functionId: 'SS101',
+            functionId: 'SS001',
             label: '打卡系統',
             requiresAuth: true
         },

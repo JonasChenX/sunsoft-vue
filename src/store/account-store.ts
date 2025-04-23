@@ -7,6 +7,7 @@ export interface AccountStateStorable {
     authenticated: boolean; //使用者是否已成功登入 (true 代表已驗證身份，false 代表未登入或登入失敗)
     activeProfiles: string[]; //當前啟用的使用者設定檔 (Profiles)，可能用於區分不同的使用者權限或環境（例如開發、測試、正式環境）
     currentFunctionId: string; //目前使用者所執行的功能 ID，可能用於追蹤使用者當前正在操作的系統功能或頁面
+    pKey: string;
 }
 
 export const useAccountStore = defineStore('account', {
@@ -16,6 +17,7 @@ export const useAccountStore = defineStore('account', {
         authenticated: false,
         activeProfiles: [],
         currentFunctionId: '',
+        pKey: '',
     }),
     getters: {
         isLogon: state => state.logon,
@@ -23,6 +25,7 @@ export const useAccountStore = defineStore('account', {
         isAuthenticated: state => state.authenticated,
         getActiveProfiles: state => state.activeProfiles,
         getCurrentFunctionId: state => state.currentFunctionId,
+        getPKey: state => state.pKey,
         getAuthenticationTokenKey: () => "ss-authenticationToken",
         getRequestedUrlKey: () => "requested-url"
     },
@@ -45,6 +48,9 @@ export const useAccountStore = defineStore('account', {
         },
         setCurrentFunctionId(functionId: string) {
             this.currentFunctionId = functionId;
+        },
+        setPKey(key: string) {
+            this.pKey = key;
         }
     }
 });

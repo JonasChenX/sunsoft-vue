@@ -27,12 +27,13 @@
   </v-container>
 </template>
 <script setup lang="ts">
-import {inject, reactive, ref} from "vue";
-import {email, minLength, required} from "@/common/s-form/vuelidate";
-import {useValidation} from "@/common/s-form/validations";
-import {getAuthenticate, getPublicKey} from "@/core/login/account-api";
+import { inject, reactive, ref } from "vue";
+import { email, minLength, required } from "@/common/s-form/vuelidate";
+import { useValidation } from "@/common/s-form/validations";
+import { getAuthenticate } from "@/core/login/account-api";
 import AccountService from "@/core/login/account-service";
-import {JSEncrypt} from "jsencrypt";
+import { useAccountStore } from "@/store/account-store";
+import { JSEncrypt } from "jsencrypt";
 defineOptions({
   name: "login"
 });
@@ -49,11 +50,9 @@ const login = async () => {
 
     isLoading.value = true; // 開始載入
 
-    const { headers: publicKeyHeader } = await getPublicKey()
-    const publicKey = publicKeyHeader['publickey'] ?? '';
-
     const encryptor = new JSEncrypt();
-    encryptor.setPublicKey(publicKey);
+    const accountStore = useAccountStore();
+    encryptor.setPublicKey(accountStore.getPKey);
 
     const request = {
       email: formVModel.email,
