@@ -35,12 +35,15 @@
       </v-list-item>
     </v-list>
   </v-dialog>
+  <!-- 提示標語 -->
+  <s-alert/>
 </template>
 <script setup lang="ts">
 import {computed, defineAsyncComponent} from 'vue';
 import { useRoute } from "vue-router";
 import { useAppStateStore } from "@/store/app-state-store";
 const Navbar = defineAsyncComponent(() => import('@/core/Navbar.vue'));
+import SAlert from '@/common/s-alert/SAlert.vue';
 const route = useRoute();
 const isLoginPage = computed(() => route.path === '/login');
 const appStateStore = useAppStateStore();

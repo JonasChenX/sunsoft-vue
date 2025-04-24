@@ -111,6 +111,7 @@
 import { onMounted, onUnmounted, defineAsyncComponent, computed, reactive } from 'vue'
 import { randomFun, formatFun } from '@/common/fun/fun-main'
 const STextCanvas = defineAsyncComponent(() => import('@/common/s-text-canvas/STextCanvas.vue'));
+import { useAlert }from '@/common/s-alert/useSAlert'
 defineOptions({
   name: "ss001w"
 });
@@ -151,8 +152,12 @@ onUnmounted(() => {
 
 // 上班卡按鈕處理
 const clockIn = async () => {
+  if(state.countdownSeconds <= 0){
+    useAlert().error("請重新進入該畫面！");
+    return;
+  }
   if (!isCaptchaValid.value) {
-    alert("請輸入正確驗證碼！");
+    useAlert().error("請輸入正確驗證碼！");
     return;
   }
   try {
