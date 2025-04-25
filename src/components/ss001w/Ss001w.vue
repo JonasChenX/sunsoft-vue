@@ -28,14 +28,6 @@
               請重新進入該頁面
             </v-chip>
           </div>
-          <v-btn
-            rounded="lg"
-            size="small"
-            variant="text"
-            border
-            class="text-center"
-            @click="updateTime()"
-          >同步時間按鈕</v-btn>
         </div>
         <div class="pa-6 px-12">
           <v-card-title class="text-h5 text-center">當前時間</v-card-title>
@@ -60,7 +52,7 @@
           </div>
           <div class="d-flex justify-center">
             <v-btn
-                @click="clockIn()"
+                @click="clockInOrOuFun('IN')"
                 color="primary"
                 class="ma-5"
                 size="x-large"
@@ -69,7 +61,7 @@
               簽到
             </v-btn>
             <v-btn
-                @click="clockOut()"
+                @click="clockInOrOuFun('OUT')"
                 color="primary"
                 class="ma-5"
                 size="x-large"
@@ -87,6 +79,9 @@
                         size="128"
                     ></v-icon>
                   </div>
+                  <v-card-text class="text-center ma-0">
+                    <v-chip size="x-large">{{ clockEnum[state.clockTypeAct as 'IN' | 'OUT'] }}成功</v-chip>
+                  </v-card-text>
                   <v-card-text class="text-h4 text-center">
                     {{state.activeTime}}
                   </v-card-text>
@@ -112,6 +107,7 @@ import { onMounted, onUnmounted, defineAsyncComponent, computed, reactive } from
 import { randomFun, formatFun } from '@/common/fun/fun-main'
 const STextCanvas = defineAsyncComponent(() => import('@/common/s-text-canvas/STextCanvas.vue'));
 import { useAlert }from '@/common/s-alert/useSAlert'
+import { initBySs001, clockInOrOut } from "./ss001-api";
 defineOptions({
   name: "ss001w"
 });
@@ -123,6 +119,8 @@ const state = reactive({
   countdownSeconds: 10 * 60, //打卡無效前倒數
   captcha: '', //驗證碼
   captchaInput: '', //驗證碼輸入框
+  key: '',
+  clockTypeAct: 'IN' //打卡類型
 })
 const isCaptchaValid = computed(() => state.captchaInput === state.captcha);
 
@@ -131,7 +129,15 @@ const updateTime = () => {
   state.currentTime = formatFun.formatTime(new Date())
 }
 let countdownInterval: ReturnType<typeof setInterval>;
-onMounted(() => {
+onMounted(async () => {
+  try {
+    const { data, headers } = await initBySs001()
+    if(data){
+      state.key = headers?.['x-clock-auth']
+    }
+  } catch (error){
+    console.error('初始化失敗', error)
+  }
   state.captcha = randomFun.generateRandomString(6,"number")
   updateTime()
   currentTimeInterval = window.setInterval(updateTime, 1000)
@@ -150,8 +156,14 @@ onUnmounted(() => {
   clearInterval(countdownInterval);
 })
 
+const clockEnum: Record<'IN' | 'OUT', string> = {
+  IN: '簽到',
+  OUT: '簽退'
+}
+
 // 上班卡按鈕處理
-const clockIn = async () => {
+type ClockType = keyof typeof clockEnum;
+const clockInOrOuFun = async (clockType: ClockType) => {
   if(state.countdownSeconds <= 0){
     useAlert().error("請重新進入該畫面！");
     return;
@@ -161,22 +173,13 @@ const clockIn = async () => {
     return;
   }
   try {
-    // 模擬 API 請求
-    console.log('打卡中...');
-    await new Promise(resolve => setTimeout(resolve, 1000)) // 模擬 1 秒 API 呼叫
-    state.activeTime = new Date().toLocaleString()
-    console.log('上班卡打卡成功！', new Date().toLocaleString())
-
+    const { data } = await clockInOrOut({ clockType: clockType, clockKey: state.key})
+    state.activeTime = data
+    state.clockTypeAct = clockType
     state.isActiveSuccess = true  // 成功後顯示 Dialog
   } catch (error) {
     console.error('打卡失敗', error)
   }
-
-}
-
-// 下班卡按鈕處理
-const clockOut = () => {
-  console.log('下班卡打卡成功！', new Date().toLocaleString())
 }
 
 const changeCaptcha = () => {
