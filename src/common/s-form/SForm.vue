@@ -212,7 +212,9 @@ const getFormData = async () => {
   if(!await checkValidity()){
     return null;
   }
-  return formData;
+  return Object.fromEntries(
+      Object.entries(formData).map(([key, value]) => [key, value === '' ? null : value])
+  );
 }
 defineExpose({
   getFormData

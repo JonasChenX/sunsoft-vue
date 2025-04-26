@@ -4,6 +4,7 @@ const forbiddenView = () => import('@/components/ForbiddenView.vue');
 const notFoundView = () => import('@/components/NotFoundView.vue');
 const login = () => import('@/core/login/Login.vue');
 import ss01 from '@/router/ss01'
+import ss09 from '@/router/ss09'
 import { useAccountStore } from "@/store/account-store";
 import { writeFunctionUsageLog } from "@/core/login/account-api";
 import AccountService from "@/core/login/account-service";
@@ -33,7 +34,8 @@ const routes = [
         meta: { requiresAuth: false },
         component: notFoundView
     },
-    ...ss01
+    ...ss01,
+    ...ss09
 ]
 
 const router = createRouter({
