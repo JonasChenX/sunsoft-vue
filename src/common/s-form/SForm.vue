@@ -200,7 +200,7 @@ const validationRules = computed(() => {
   if (!Array.isArray(props.formConfig.groups)) return rules;
   props.formConfig.groups.forEach(group => {
     if (group.validation) {
-      rules[group.model] = group.validation;
+      rules[group.modelName] = group.validation;
     }
   });
   return rules;
