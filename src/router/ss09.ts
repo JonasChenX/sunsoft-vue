@@ -1,5 +1,6 @@
 const SS902 = () => import('@/components/ss902w/Ss902w.vue')
 const SS903 = () => import('@/components/ss903w/Ss903w.vue')
+const SS904 = () => import('@/components/ss904w/Ss904w.vue')
 
 export default [
     {
@@ -19,6 +20,16 @@ export default [
         meta: {
             functionId: 'SS903',
             label: '功能面頁跳轉紀錄查看',
+            requiresAuth: true
+        },
+    },
+    {
+        name: 'ss904',
+        path: '/ss904',
+        component: SS904,
+        meta: {
+            functionId: 'SS904',
+            label: '功能API執行紀錄查看',
             requiresAuth: true
         },
     }
