@@ -1,5 +1,6 @@
 <template>
-  <div class="ma-5">
+    <s-btn-group @f4="search" :f4-enabled="true"></s-btn-group>
+  <div class="mx-5">
     <v-container class="border-md rounded">
       <div class="text-h5 mb-3">員工基本資料管理</div>
       <s-form
@@ -50,6 +51,7 @@ import {queryUserAccount} from "@/components/ss301w/ss301w-api";
 import {ss301TableHeader} from "@/components/ss301w/ss301-header-type";
 const STable = defineAsyncComponent(() => import('@/common/s-table/STable.vue'));
 const SForm = defineAsyncComponent(() => import('@/common/s-form/SForm.vue'));
+const SBtnGroup = defineAsyncComponent(() => import('@/common/s-btn-group/SBtnGroup.vue'));
 defineOptions({
   name: "ss301w"
 });

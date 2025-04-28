@@ -27,6 +27,10 @@ let pinia = createPinia();
 const accountService = new AccountService(pinia, router);
 app.provide('accountService', accountService);
 
+//快捷鍵指令
+import {ShortcutDirective} from "@/common/directives/shortcut-directive";
+app.directive('s-shortcut', ShortcutDirective);
+
 app.use(vuetify)
     .use(pinia)
     .use(router)
