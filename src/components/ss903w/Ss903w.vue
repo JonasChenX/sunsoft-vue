@@ -33,16 +33,13 @@
     </v-container>
 </template>
 <script setup lang="ts">
-import { ref, defineAsyncComponent, reactive } from 'vue';
+import { ref, reactive } from 'vue';
 import { STableHeaderType } from "@/common/s-table/s-table-type";
 import { ss903TableHeader } from "@/components/ss903w/ss903-header-type";
 import { Ss903TableItemType } from "@/components/ss903w/ss903-item-type";
 import { ss903FormConfig } from "@/components/ss903w/ss903-form-config";
 import { SFormConfig, SFormFunction } from "@/common/s-form/s-form-type";
-import { strChangFun } from '@/common/fun/fun-main'
 import { getFunIdLog } from "@/components/ss903w/ss903w-api";
-const STable = defineAsyncComponent(() => import('@/common/s-table/STable.vue'));
-const SForm = defineAsyncComponent(() => import('@/common/s-form/SForm.vue'));
 defineOptions({
   name: "ss903w"
 });
@@ -65,13 +62,16 @@ const sTableState = reactive({
 })
 
 const search = async (): Promise<void> => {
+  const getFormData = await sFormRef.value!.getFormData()
+  if (!getFormData) {
+    return
+  }
   sTableState.loading = true
   sTableState.isShow = true
 
   sTableState.search = ''
   sTableState.selected = []
 
-  const getFormData = await sFormRef.value!.getFormData()
   getFunIdLog(getFormData)
     .then(({ data }: { data: Ss903TableItemType[] }) => {
       items.value = data;

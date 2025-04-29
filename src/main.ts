@@ -34,6 +34,12 @@ app.directive('s-shortcut', ShortcutDirective);
 import SBtnGroup from '@/common/s-btn-group/SBtnGroup.vue';
 app.component('s-btn-group', SBtnGroup);
 
+import STable from '@/common/s-table/STable.vue';
+app.component('s-table', STable);
+
+import SForm from '@/common/s-form/SForm.vue';
+app.component('s-form', SForm);
+
 app.use(vuetify)
     .use(pinia)
     .use(router)

@@ -38,7 +38,7 @@
     </v-container>
 </template>
 <script setup lang="ts">
-import {ref, defineAsyncComponent, reactive, onMounted} from 'vue';
+import {ref, reactive, onMounted} from 'vue';
 import { STableHeaderType } from "@/common/s-table/s-table-type";
 import {SFormConfig, SFormFunction} from "@/common/s-form/s-form-type";
 import { strChangFun } from '@/common/fun/fun-main'
@@ -46,8 +46,6 @@ import {Ss904TableItemType} from "@/components/ss904w/ss904-item-type";
 import {ss904TableHeader} from "@/components/ss904w/ss904-header-type";
 import {getAPIExeLog, getFunCodeOption} from "@/components/ss904w/ss904w-api";
 import {ss904FormConfig} from "@/components/ss904w/ss904-form-config";
-const STable = defineAsyncComponent(() => import('@/common/s-table/STable.vue'));
-const SForm = defineAsyncComponent(() => import('@/common/s-form/SForm.vue'));
 defineOptions({
   name: "ss904w"
 });
@@ -81,14 +79,17 @@ const sTableState = reactive({
 })
 
 const search = async (): Promise<void> => {
+  const getFormData = await sFormRef.value!.getFormData()
+  if (!getFormData) {
+    return
+  }
   sTableState.loading = true
   sTableState.isShow = true
 
   sTableState.search = ''
   sTableState.selected = []
 
-  const getFormData = await sFormRef.value!.getFormData()
-    getAPIExeLog(getFormData)
+  getAPIExeLog(getFormData)
     .then(({ data }: { data: Ss904TableItemType[] }) => {
       items.value = data;
     }).catch((e) => {

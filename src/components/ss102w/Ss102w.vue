@@ -59,7 +59,7 @@
     </v-container>
 </template>
 <script setup lang="ts">
-import {ref, defineAsyncComponent, reactive} from 'vue';
+import {ref, reactive} from 'vue';
 import { STableHeaderType } from "@/common/s-table/s-table-type";
 import {ss102TableHeader, ss102TableHeaderB} from "@/components/ss102w/ss102-header-type";
 import {ss102formConfig} from "@/components/ss102w/ss102-form-config";
@@ -70,13 +70,12 @@ import {
     ss102TableItemTestB
 } from "@/components/ss102w/ss102-item-type";
 import {getColorByType} from "@/common/enum/leave-and-overtime";
-const STable = defineAsyncComponent(() => import('@/common/s-table/STable.vue'));
-const SForm = defineAsyncComponent(() => import('@/common/s-form/SForm.vue'));
+import {SFormFunction} from "@/common/s-form/s-form-type";
 defineOptions({
     name: "ss102w"
 });
 
-const sFormRef = ref(null)
+const sFormRef = ref<SFormFunction | null>(null)
 
 //表單設定檔
 const formConfig = reactive<any>(ss102formConfig)
@@ -98,7 +97,7 @@ const search = async (): Promise<void> => {
     sTableState.loading = true
     sTableState.isShow = true
 
-    const getFormData = await sFormRef.value.getFormData()
+    const getFormData = await sFormRef.value!.getFormData()
     console.log(getFormData)
 
     setTimeout(() => {

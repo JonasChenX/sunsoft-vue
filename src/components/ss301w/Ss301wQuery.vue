@@ -48,16 +48,13 @@
     </v-container>
 </template>
 <script setup lang="ts">
-import {ref, defineAsyncComponent, reactive, onActivated, onDeactivated} from 'vue';
+import {ref, reactive} from 'vue';
 import { STableHeaderType } from "@/common/s-table/s-table-type";
 import {SFormConfig, SFormFunction} from "@/common/s-form/s-form-type";
 import {ss301FormConfig} from "@/components/ss301w/ss301-form-config";
 import {Ss301TableItemType} from "@/components/ss301w/ss301-item-type";
 import {queryUserAccount} from "@/components/ss301w/ss301w-api";
 import {ss301TableHeader} from "@/components/ss301w/ss301-header-type";
-const STable = defineAsyncComponent(() => import('@/common/s-table/STable.vue'));
-const SForm = defineAsyncComponent(() => import('@/common/s-form/SForm.vue'));
-// const SBtnGroup = defineAsyncComponent(() => import('@/common/s-btn-group/SBtnGroup.vue'));
 defineOptions({
   name: "ss301w-query"
 });
@@ -80,13 +77,17 @@ const sTableState = reactive({
 })
 
 const search = async (): Promise<void> => {
+  const getFormData = await sFormRef.value!.getFormData()
+  if (!getFormData) {
+    return
+  }
+
   sTableState.loading = true
   sTableState.isShow = true
 
   sTableState.search = ''
   sTableState.selected = []
 
-  const getFormData = await sFormRef.value!.getFormData()
   queryUserAccount(getFormData)
     .then(({ data }: { data: Ss301TableItemType[] }) => {
       items.value = data;

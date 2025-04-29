@@ -47,7 +47,7 @@
     </v-container>
 </template>
 <script setup lang="ts">
-import {ref, defineAsyncComponent, reactive} from 'vue';
+import {ref, reactive} from 'vue';
 import { STableHeaderType } from "@/common/s-table/s-table-type";
 import {SFormConfig, SFormFunction} from "@/common/s-form/s-form-type";
 import { strChangFun } from '@/common/fun/fun-main'
@@ -56,8 +56,6 @@ import {ss905FormConfig} from "@/components/ss905w/ss905-form-config";
 import {ss905TableHeader} from "@/components/ss905w/ss905-header-type";
 import {Ss905TableItemType} from "@/components/ss905w/ss905-item-type";
 import { downloadFun } from '@/common/fun/fun-main'
-const STable = defineAsyncComponent(() => import('@/common/s-table/STable.vue'));
-const SForm = defineAsyncComponent(() => import('@/common/s-form/SForm.vue'));
 defineOptions({
   name: "ss905w"
 });
