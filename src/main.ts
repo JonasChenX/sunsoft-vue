@@ -31,6 +31,9 @@ app.provide('accountService', accountService);
 import {ShortcutDirective} from "@/common/directives/shortcut-directive";
 app.directive('s-shortcut', ShortcutDirective);
 
+import SBtnGroup from '@/common/s-btn-group/SBtnGroup.vue';
+app.component('s-btn-group', SBtnGroup);
+
 app.use(vuetify)
     .use(pinia)
     .use(router)

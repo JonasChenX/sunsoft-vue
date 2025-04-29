@@ -26,19 +26,9 @@ const bindMousetrap = (el: HTMLElement, bind: DirectiveBinding, vnode: VNode) =>
 
 // 內部綁定事件處理
 const bindInternal = (el: HTMLElement, bind: DirectiveBinding, vnode: VNode) => {
-  // 處理 shortcut 事件
-  const shortcutCallback = vnode.props && vnode.props['onShortcut'];
-  if (shortcutCallback) {
-    // 發送自定義 shortcut 事件
-    const evx = new CustomEvent('shortcut', { detail: { key: bind.value } });
-    el.dispatchEvent(evx);
-    shortcutCallback(evx); // 如果有 `onShortcut` 回調，調用它
-  }
-  // 如果元素沒有綁定 shortcut 事件，則觸發 click 事件
-  else {
-    const clickEvent = new MouseEvent('click');
-    el.dispatchEvent(clickEvent);
-  }
+  //則觸發 click 事件
+  const clickEvent = new MouseEvent('click');
+  el.dispatchEvent(clickEvent);
 }
 
 // Vue 指令
@@ -51,7 +41,7 @@ const ShortcutDirective = {
   unmounted(el: HTMLElement, bind: DirectiveBinding) {
     const key = bind.value.toLowerCase();
     Mousetrap.unbind(key);
-  },
+  }
 };
 
 // 檢查元素是否禁用
