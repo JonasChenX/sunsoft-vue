@@ -51,7 +51,7 @@
 import {ref, reactive} from 'vue';
 import { STableHeaderType } from "@/common/s-table/s-table-type";
 import {SFormConfig, SFormFunction} from "@/common/s-form/s-form-type";
-import {ss301FormConfig} from "@/components/ss301w/ss301-form-config";
+import {ss301QueryFormConfig} from "@/components/ss301w/ss301-form-config";
 import {Ss301TableItemType} from "@/components/ss301w/ss301-item-type";
 import {queryUserAccount} from "@/components/ss301w/ss301w-api";
 import {ss301TableHeader} from "@/components/ss301w/ss301-header-type";
@@ -62,7 +62,7 @@ defineOptions({
 const sFormRef = ref<SFormFunction | null>(null)
 
 //表單設定檔
-const formConfig : SFormConfig = reactive<any>(ss301FormConfig)
+const formConfig : SFormConfig = reactive<any>(ss301QueryFormConfig)
 
 const headers = ref<STableHeaderType[]>([...ss301TableHeader])
 const items = ref<Ss301TableItemType[]>([]);

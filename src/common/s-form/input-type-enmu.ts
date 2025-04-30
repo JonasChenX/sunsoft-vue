@@ -1,5 +1,6 @@
 export enum InputType {
     InputText= "inputText",
+    inputPwd= "inputPwd",
     InputDate = "inputDate",
     InputDateM = "inputDateM",
     Select = "select",

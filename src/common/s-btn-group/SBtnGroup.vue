@@ -6,27 +6,27 @@
           rounded="3"
           density="compact"
       >
-        <v-btn class="me-1" color="primary" id="f1" v-s-shortcut.global="'f1'" @click="handler" :disabled="!props.f1Enabled">
+        <v-btn height="30" class="me-1" color="primary" id="f1" v-s-shortcut.global="'f1'" @click="handler" :disabled="!props.f1Enabled">
           <kbd>F1</kbd>
           {{ f1Label }}
         </v-btn>
-        <v-btn class="me-1" color="primary" id="f2" v-s-shortcut.global="'f2'" @click="handler" :disabled="!props.f2Enabled">
+        <v-btn height="30" class="me-1" color="primary" id="f2" v-s-shortcut.global="'f2'" @click="handler" :disabled="!props.f2Enabled">
           <kbd>F2</kbd>
           {{ f2Label }}
         </v-btn>
-        <v-btn class="me-1" color="primary" id="f3" v-s-shortcut.global="'f3'" @click="handler" :disabled="!props.f3Enabled">
+        <v-btn height="30" class="me-1" color="primary" id="f3" v-s-shortcut.global="'f3'" @click="handler" :disabled="!props.f3Enabled">
           <kbd>F3</kbd>
           {{ f3Label }}
         </v-btn>
-        <v-btn class="me-1" color="primary" id="f4" v-s-shortcut.global="'f4'" @click="handler" :disabled="!props.f4Enabled">
+        <v-btn height="30" class="me-1" color="primary" id="f4" v-s-shortcut.global="'f4'" @click="handler" :disabled="!props.f4Enabled">
           <kbd>F4</kbd>
           {{ f4Label }}
         </v-btn>
-        <v-btn class="me-1" color="primary" id="f5" v-s-shortcut.global="'f5'" @click="handler" :disabled="!props.f5Enabled">
+        <v-btn height="30" class="me-1" color="primary" id="f5" v-s-shortcut.global="'f5'" @click="handler" :disabled="!props.f5Enabled">
           <kbd>F5</kbd>
           {{ f5Label }}
         </v-btn>
-        <v-btn color="primary" id="f6" v-s-shortcut.global="'f6'" @click="handler" :disabled="!props.f6Enabled">
+        <v-btn height="30" color="primary" id="f6" v-s-shortcut.global="'f6'" @click="handler" :disabled="!props.f6Enabled">
           <kbd>F6</kbd>
           {{ f6Label }}
         </v-btn>
@@ -35,7 +35,6 @@
   </div>
 </template>
 <script setup lang="ts">
-import { defineEmits } from 'vue';
 defineOptions({
   name: "s-btn-group"
 });
@@ -77,5 +76,12 @@ const handler = (event: Event) => {
   }
 };
 </script>
+<style scoped>
+kbd {
+  display: inline-block;
+  padding: 0.25rem;
+  margin: 0;
+}
+</style>
 
 

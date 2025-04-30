@@ -22,6 +22,24 @@
           ></v-text-field>
         </template>
 
+        <template v-if="formItem.type == 'inputPwd'">
+          <div class="text-subtitle-1 text-medium-emphasis">{{ formItem.label }}</div>
+          <v-text-field
+              density="compact"
+              autocomplete="password"
+              :counter="formItem.maxLen || false"
+              :placeholder="formItem.placeholder"
+              variant="outlined"
+              v-model="formData[formItem.modelName]"
+              :append-inner-icon="formItem.visible ? 'mdi-eye-off' : 'mdi-eye'"
+              :type="formItem.visible ? 'text' : 'password'"
+              @click:append-inner="formItem.visible = !formItem.visible"
+              @blur="$v[formItem.modelName]?.$touch"
+              @input="$v[formItem.modelName]?.$touch"
+              :error-messages="$v[formItem.modelName]?.$errors.map((e: any) => e.$message)"
+          ></v-text-field>
+        </template>
+
         <!-- input - 日期YYYYMMDD -->
         <template v-if="formItem.type == 'inputDate'">
           <div class="text-subtitle-1 text-medium-emphasis">{{ formItem.label }}</div>
@@ -157,7 +175,7 @@
 <script setup lang="ts">
 import {computed, onMounted, reactive, ref} from "vue";
 import { useValidation } from '@/common/s-form/validations'
-import {SFormGroupsItemType, SFormValidation} from "@/common/s-form/s-form-type";
+import {SFormGroupsItemInitType, SFormGroupsItemType, SFormValidation} from "@/common/s-form/s-form-type";
 defineOptions({
   name: "s-form"
 });
@@ -177,7 +195,7 @@ onMounted(()=>{
   formAttributes.value = init(props.formConfig.groups)
 })
 
-const init = (groups: SFormGroupsItemType[]) => {
+const init = (groups: SFormGroupsItemType[]): SFormGroupsItemInitType[] => {
   if (!Array.isArray(groups)) return [];
   return groups.map(group => ({
     type: group.type,
@@ -191,6 +209,8 @@ const init = (groups: SFormGroupsItemType[]) => {
     ticksItem: group.ticksItem,
     accept: group.accept,
     rows: group.rows,
+    validation: group.validation,
+    visible: false,
   }));
 }
 

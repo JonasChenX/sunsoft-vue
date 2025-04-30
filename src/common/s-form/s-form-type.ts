@@ -2,6 +2,7 @@ import { maxLength, required } from "@/common/s-form/vuelidate";
 import { InputType } from "@/common/s-form/input-type-enmu";
 import { FileAcceptType } from "@/common/s-form/file-accept-type";
 
+//給使用者設定
 export interface SFormGroupsItemType {
     type: InputType;
     label: string;
@@ -15,6 +16,11 @@ export interface SFormGroupsItemType {
     accept?: FileAcceptType[]; //搭配inputFile 限制檔案類型
     rows?: number; //搭配textArea 設定行數
     validation?: SFormValidation;
+}
+
+//初始化用
+export interface SFormGroupsItemInitType extends SFormGroupsItemType{
+    visible: boolean; //針對密碼隱碼
 }
 
 interface SFormItemOption {
