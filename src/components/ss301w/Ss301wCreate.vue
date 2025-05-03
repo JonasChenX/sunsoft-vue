@@ -36,7 +36,9 @@
           </v-stepper-window-item>
 
           <v-stepper-window-item :value="4">
-            <div>這是第 4 步</div>
+            <ss301w-create-step4-view
+              ref="sFormStep4Ref"
+            />
           </v-stepper-window-item>
 
           <v-stepper-window-item :value="5">
@@ -60,13 +62,16 @@
   </div>
 </template>
 <script setup lang="ts">
-import {reactive, ref} from "vue";
+import {reactive, ref, defineAsyncComponent} from "vue";
 import {SFormConfig, SFormFunction} from "@/common/s-form/s-form-type";
 import {
-  ss301CreateStep1FormConfig,
-  ss301CreateStep2FormConfig,
-  ss301CreateStep3FormConfig
+    ss301CreateStep1FormConfig,
+    ss301CreateStep2FormConfig,
+    ss301CreateStep3FormConfig, ss301CreateStep4FormConfig
 } from "@/components/ss301w/ss301-form-config";
+import Ss301wCreateStep4View from "@/components/ss301w/ss301wCreateStep4View.vue";
+const ss301wCreateStep4View = defineAsyncComponent(() => import('./ss301wCreateStep4View.vue'));
+
 defineOptions({
   name: "ss301w-create"
 });
@@ -83,10 +88,9 @@ const formConfigStep1 : SFormConfig = reactive<any>(ss301CreateStep1FormConfig)
 const formConfigStep2 : SFormConfig = reactive<any>(ss301CreateStep2FormConfig)
 const formConfigStep3 : SFormConfig = reactive<any>(ss301CreateStep3FormConfig)
 
-const step = ref<number>(3)
+const step = ref<number>(4)
 
 
-//工作 -> 工作經驗(公司名稱 職位 開始日期 結束日期 工作內容)
 const steps = reactive([
   {
     title: '基本資料',
@@ -114,6 +118,7 @@ const stepperRef = ref()
 const sFormStep1Ref = ref<SFormFunction | null>(null)
 const sFormStep2Ref = ref<SFormFunction | null>(null)
 const sFormStep3Ref = ref<SFormFunction | null>(null)
+const sFormStep4Ref = ref<SFormFunction | null>(null)
 
 // 點下一步時驗證表單
 const nextStep = async () => {
@@ -145,7 +150,12 @@ const nextStep = async () => {
       stepperRef.value?.next()
       break
     case 4:
-      //驗證表單
+        //驗證表單
+        const getFormDataStep4 = await sFormStep4Ref.value!.getFormData()
+        if (!getFormDataStep4) {
+            // return
+        }
+        stepperRef.value?.next()
       break
     default:
       break
@@ -155,4 +165,5 @@ const nextStep = async () => {
 const submit = () => {
   console.log('Submit form')
 }
+
 </script>

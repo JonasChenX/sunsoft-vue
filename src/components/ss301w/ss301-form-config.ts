@@ -239,3 +239,72 @@ export const ss301CreateStep3FormConfig = {
         },
     ]
 }
+
+//工作 -> 工作經驗(公司名稱 職位 開始日期 結束日期 專案名稱 專案負責技術 工作內容)
+export const ss301CreateStep4FormConfig = {
+    formModel: {
+        companyName: '', // 公司名稱
+        jobTitle: '', // 職位
+        startDate: '', // 開始日期
+        endDate: '', // 結束日期
+        projectName: '', // 專案名稱
+        projectTech: '', // 專案負責技術
+        jobDescription: '', // 工作內容
+    },
+    groups: [
+        {
+            type: InputType.InputText,
+            label: "公司名稱",
+            placeholder: "請輸入公司名稱",
+            isFull: false,
+            modelName: "companyName",
+            validation: { required }
+        },
+        {
+            type: InputType.InputText,
+            label: "職位",
+            placeholder: "請輸入職位",
+            isFull: false,
+            modelName: "jobTitle",
+            validation: { required }
+        },
+        {
+            type: InputType.InputDate,
+            label: "開始日期",
+            isFull: false,
+            modelName: "startDate",
+            // validation: { required }
+        },
+        {
+            type: InputType.InputDate,
+            label: "結束日期",
+            isFull: false,
+            modelName: "endDate",
+            // validation: { required }
+        },
+        {
+            type: InputType.InputText,
+            label: "專案名稱",
+            placeholder: "請輸入專案名稱",
+            isFull: true,
+            modelName: "projectName",
+            // validation: { required }
+        },
+        {
+            type: InputType.InputText,
+            label: "專案負責技術",
+            placeholder: "請輸入使用技術",
+            isFull: true,
+            modelName: "projectTech",
+            // validation: { required }
+        },
+        {
+            type: InputType.TextArea,
+            label: "工作內容",
+            placeholder: "請輸入工作內容",
+            isFull: true,
+            modelName: "jobDescription",
+            // validation: { required }
+        }
+    ]
+}
