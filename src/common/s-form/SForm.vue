@@ -22,6 +22,7 @@
           ></v-text-field>
         </template>
 
+        <!-- input - 隱碼文字 -->
         <template v-if="formItem.type == 'inputPwd'">
           <div class="text-subtitle-1 text-medium-emphasis">{{ formItem.label }}</div>
           <v-text-field
@@ -121,6 +122,107 @@
           ></v-checkbox>
         </template>
 
+        <!-- checkbox(可添加複選) -->
+        <template v-if="formItem.type == 'checkboxM'">
+          <div class="text-subtitle-1 text-medium-emphasis">{{ formItem.label }}</div>
+            <v-combobox
+              density="compact"
+              v-model="formData[formItem.modelName]"
+              v-model:search="formItem.search"
+              :custom-filter="queryFilter(formItem.optionItem, formData[formItem.modelName])"
+              :items="formItem.optionItem"
+              item-value="title"
+              :return-object="false"
+              variant="outlined"
+              hide-selected
+              multiple
+              @update:modelValue="handleModelUpdate($event, formData[formItem.modelName], formItem)"
+              @blur="$v[formItem.modelName]?.$touch"
+              @change="$v[formItem.modelName]?.$touch"
+              :error-messages="$v[formItem.modelName]?.$errors.map((e: any) => e.$message)"
+            >
+              <!-- 項目被選取後，在 input 欄中顯示的 chip -->
+              <template v-slot:selection="{ item, index }">
+                <v-chip
+                  v-if="item === Object(item)"
+                  :text="item.title"
+                  size="small"
+                  variant="flat"
+                  closable
+                  label
+                  @click:close="removeSelection(index, formData[formItem.modelName])"
+                />
+              </template>
+
+              <template v-slot:item="{ props, item }">
+                <!-- 若為 header 且有輸入 search，顯示 "Create + 輸入內容" 的提示 -->
+                <v-list-item v-if="item.raw.header && formItem.search">
+                  <span class="mr-3">Create</span>
+                  <v-chip
+                    size="small"
+                    variant="flat"
+                    label
+                  >
+                    {{ formItem.search }}
+                  </v-chip>
+                </v-list-item>
+
+                <!-- 若為 header (但無 search)，顯示分類標題 -->
+                <v-list-subheader
+                  v-else-if="item.raw.header"
+                  :title="item.title"
+                ></v-list-subheader>
+
+                <!-- 一般的下拉選項 -->
+                <v-list-item v-else @click="handleItemClick(props, formItem)">
+                  <!-- 若該項目正被編輯，顯示可編輯的輸入框 -->
+                  <v-text-field
+                    v-if="formItem.editingItem === item.raw"
+                    v-model="formItem.editingItem['title']"
+                    bg-color="transparent"
+                    class="mr-3"
+                    density="compact"
+                    variant="plain"
+                    autofocus
+                    hide-details
+                    @click.stop
+                    @keydown.stop
+                    @keyup.enter="edit(item.raw, formItem)"
+                  ></v-text-field>
+
+                  <!-- 否則顯示該項目的 chip -->
+                  <v-chip
+                    v-else
+                    :text="item.raw.title"
+                    variant="flat"
+                    label
+                    size="small"
+                  ></v-chip>
+
+                  <!-- 右側的操作按鈕 (編輯 / 確認) -->
+                  <template v-slot:append>
+                      <v-btn
+                        v-if="formItem.editingItem === item.raw"
+                        :color="formItem.editingItem !== item.raw ? 'primary' : 'red'"
+                        icon="mdi-delete"
+                        size="small"
+                        variant="text"
+                        @click.stop.prevent="removeOptionItem(item.raw, formItem)"
+                      ></v-btn>
+                    <v-btn
+                      :color="formItem.editingItem !== item.raw ? 'primary' : 'success'"
+                      :icon="formItem.editingItem !== item.raw ? 'mdi-pencil' : 'mdi-check'"
+                      size="small"
+                      variant="text"
+                      @click.stop.prevent="edit(item.raw, formItem)"
+                    ></v-btn>
+                  </template>
+                </v-list-item>
+              </template>
+            </v-combobox>
+        </template>
+
+
         <!-- 檔案 -->
         <template v-if="formItem.type == 'inputFile'">
           <v-file-input
@@ -154,8 +256,8 @@
           ></v-textarea>
         </template>
 
+        <!-- 拉條 -->
         <template v-if="formItem.type == 'slider'">
-          <!-- 拉條 -->
           <v-slider
             :label="formItem.label"
             v-model="formData[formItem.modelName]"
@@ -175,7 +277,12 @@
 <script setup lang="ts">
 import {computed, onMounted, reactive, ref} from "vue";
 import { useValidation } from '@/common/s-form/validations'
-import {SFormGroupsItemInitType, SFormGroupsItemType, SFormValidation} from "@/common/s-form/s-form-type";
+import {
+    SFormGroupsItemInitType,
+    SFormGroupsItemType,
+    SFormItemOption,
+    SFormValidation
+} from "@/common/s-form/s-form-type";
 defineOptions({
   name: "s-form"
 });
@@ -205,12 +312,15 @@ const init = (groups: SFormGroupsItemType[]): SFormGroupsItemInitType[] => {
     maxLen: group.maxLen,
     placeholder: group.placeholder,
     textAreaContent: group.textAreaContent,
-    optionItem: group.optionItem,
+    optionItem: group.optionItem ? JSON.parse(JSON.stringify(group.optionItem)) : null,
     ticksItem: group.ticksItem,
     accept: group.accept,
     rows: group.rows,
     validation: group.validation,
     visible: false,
+    search: '',
+    editingItem: null,
+    previousModel: null
   }));
 }
 
@@ -239,4 +349,105 @@ const getFormData = async () => {
 defineExpose({
   getFormData
 });
+
+const handleModelUpdate = (val: string[], modelList: string[],formItem: SFormGroupsItemInitType) => {
+    const items = formItem.optionItem;
+    if (!items) {
+        return
+    }
+    const editingItem = formItem.editingItem;
+    if(editingItem !== null){
+      return
+    }
+    const existingTitles = items?.map(item => item.title)
+    if (!existingTitles) {
+        return
+    }
+
+    const uniqueVal = Array.from(new Set(val)) // 先去重複
+    const newItems = uniqueVal.filter(v => !existingTitles.includes(v))
+
+    // 加入新項目（非重複的）
+    newItems.forEach(v => {
+        items.push({ title: v })
+    })
+
+    // 更新 modelList，但只保留有對應 items 的
+    modelList.length = 0
+    uniqueVal.forEach(v => {
+        if (items.find(i => i.title === v)) {
+            modelList.push(v)
+        }
+    })
+}
+
+const edit = (item: SFormItemOption, formItem: SFormGroupsItemInitType) => {
+    if (!formItem.optionItem) {
+        return
+    }
+    const isEditing = formItem.editingItem === item
+    if (isEditing) {
+        const newTitle = item.title?.trim()
+        const allTitles = formItem.optionItem.map(opt => opt.title)
+        const duplicateCount = allTitles.filter(title => title === newTitle).length
+
+        // 如果同名 title 超過 1（自己也算進去），代表有重複
+        if (duplicateCount > 1) {
+            return
+        }
+
+        // 進行儲存：退出編輯模式
+        formItem.editingItem = null
+    } else {
+        // 進入編輯模式
+        formItem.editingItem = item
+    }
+}
+
+const queryFilter = (items: SFormItemOption[], model: string[]) => {
+    return (value: unknown, queryText: string, item: { raw: SFormItemOption }): boolean => {
+
+        const toLowerCaseString = (val: unknown): string =>
+            String(val != null ? val : '').toLowerCase()
+
+        const query = toLowerCaseString(queryText)
+
+        const availableOptions = items.filter(x => !model.includes(x.title))
+
+        const hasAnyMatch = availableOptions.some(
+            x => !x.header && toLowerCaseString(x.title).includes(query)
+        )
+
+        if (item.raw.header) return !hasAnyMatch
+
+        const text = toLowerCaseString(item.raw.title)
+
+        return text.includes(query)
+    }
+}
+const removeSelection = (index: number, modelList: string[]) => {
+    modelList.splice(index, 1)
+}
+
+const removeOptionItem = (item: SFormItemOption, formItem: SFormGroupsItemInitType) => {
+    if(!formItem.optionItem){
+        return
+    }
+    const index = formItem.optionItem.findIndex((i: SFormItemOption) => i === item)
+    if (index !== -1) {
+        formItem.optionItem.splice(index, 1)
+        // 如果正在編輯的是這筆，也一併清除
+        if (formItem.editingItem === item) {
+            formItem.editingItem = null
+        }
+    }
+}
+const handleItemClick = (props: any, formItem: SFormGroupsItemInitType) => {
+    if(formItem.editingItem !== null){
+        console.log("正在編輯，跳過點擊")
+        return
+    }
+    props.onClick()
+}
+
 </script>

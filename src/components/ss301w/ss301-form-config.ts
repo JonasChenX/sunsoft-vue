@@ -248,7 +248,7 @@ export const ss301CreateStep4FormConfig = {
         startDate: '', // 開始日期
         endDate: '', // 結束日期
         projectName: '', // 專案名稱
-        projectTech: '', // 專案負責技術
+        projectTech: [], // 專案負責技術
         jobDescription: '', // 工作內容
     },
     groups: [
@@ -291,12 +291,18 @@ export const ss301CreateStep4FormConfig = {
             // validation: { required }
         },
         {
-            type: InputType.InputText,
+            type: InputType.checkboxM,
             label: "專案負責技術",
             placeholder: "請輸入使用技術",
             isFull: true,
             modelName: "projectTech",
-            // validation: { required }
+            optionItem: [
+                { header: true, title: '請選擇較熟悉的技術,若沒有可自行輸入' },
+                { title: 'Java' },
+                { title: 'Vue' },
+                { title: 'MySQL' },
+            ],
+            validation: { required }
         },
         {
             type: InputType.TextArea,

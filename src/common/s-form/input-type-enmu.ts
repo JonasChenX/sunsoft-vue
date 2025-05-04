@@ -6,6 +6,7 @@ export enum InputType {
     Select = "select",
     SelectM = "selectM",
     Checkbox = "checkbox",
+    checkboxM = "checkboxM",
     InputFile = "inputFile",
     TextArea = "textArea",
     Slider = "slider",

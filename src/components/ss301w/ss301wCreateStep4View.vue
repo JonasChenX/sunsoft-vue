@@ -62,7 +62,14 @@ type WorkItem = {
     isDeleted: boolean;
     workModel: SFormConfig;
 };
-const workExperienceList: WorkItem[] = reactive([])
+const workExperienceList: WorkItem[] = reactive([
+    {
+        key: crypto.randomUUID(),
+        isShowDelBtn: false,
+        isDeleted: false,
+        workModel: ss301CreateStep4FormConfig,
+    }
+])
 const addWorkExperience = () => {
     workExperienceList.push({
         key: crypto.randomUUID(),

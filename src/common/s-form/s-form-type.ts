@@ -21,11 +21,15 @@ export interface SFormGroupsItemType {
 //初始化用
 export interface SFormGroupsItemInitType extends SFormGroupsItemType{
     visible: boolean; //針對密碼隱碼
+    search: string;
+    editingItem: SFormItemOption | null; //搭配checkboxM
+    previousModel: string | number | string[] | boolean | null; //搭配checkboxM 修改前的值
 }
 
-interface SFormItemOption {
+export interface SFormItemOption {
     title: string;
-    value: any;
+    value?: any; //checkboxM可不用 其他都要
+    header?: boolean; //搭配checkboxM
 }
 
 interface SFormItemTick {
