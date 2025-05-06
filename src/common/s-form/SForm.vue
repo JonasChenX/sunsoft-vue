@@ -129,14 +129,13 @@
               density="compact"
               v-model="formData[formItem.modelName]"
               v-model:search="formItem.search"
-              :custom-filter="queryFilter(formItem.optionItem, formData[formItem.modelName])"
+              :custom-filter="queryFilterByCheckboxM(formItem.optionItem || [], formData[formItem.modelName])"
               :items="formItem.optionItem"
               item-value="title"
-              :return-object="false"
               variant="outlined"
               hide-selected
               multiple
-              @update:modelValue="handleModelUpdate($event, formData[formItem.modelName], formItem)"
+              @update:modelValue="handleModelUpdateByCheckboxM($event, formData, formItem)"
               @blur="$v[formItem.modelName]?.$touch"
               @change="$v[formItem.modelName]?.$touch"
               :error-messages="$v[formItem.modelName]?.$errors.map((e: any) => e.$message)"
@@ -150,7 +149,7 @@
                   variant="flat"
                   closable
                   label
-                  @click:close="removeSelection(index, formData[formItem.modelName])"
+                  @click:close="removeSelectionByCheckboxM(index, formData[formItem.modelName])"
                 />
               </template>
 
@@ -174,7 +173,7 @@
                 ></v-list-subheader>
 
                 <!-- 一般的下拉選項 -->
-                <v-list-item v-else @click="handleItemClick(props, formItem)">
+                <v-list-item v-else @click="handleItemClickByCheckboxM(props, formItem)">
                   <!-- 若該項目正被編輯，顯示可編輯的輸入框 -->
                   <v-text-field
                     v-if="formItem.editingItem === item.raw"
@@ -187,7 +186,7 @@
                     hide-details
                     @click.stop
                     @keydown.stop
-                    @keyup.enter="edit(item.raw, formItem)"
+                    @keyup.enter="editByCheckboxM(item.raw, formItem)"
                   ></v-text-field>
 
                   <!-- 否則顯示該項目的 chip -->
@@ -207,14 +206,14 @@
                         icon="mdi-delete"
                         size="small"
                         variant="text"
-                        @click.stop.prevent="removeOptionItem(item.raw, formItem)"
+                        @click.stop.prevent="removeOptionItemByCheckboxM(item.raw, formItem)"
                       ></v-btn>
                     <v-btn
                       :color="formItem.editingItem !== item.raw ? 'primary' : 'success'"
                       :icon="formItem.editingItem !== item.raw ? 'mdi-pencil' : 'mdi-check'"
                       size="small"
                       variant="text"
-                      @click.stop.prevent="edit(item.raw, formItem)"
+                      @click.stop.prevent="editByCheckboxM(item.raw, formItem)"
                     ></v-btn>
                   </template>
                 </v-list-item>
@@ -277,6 +276,7 @@
 <script setup lang="ts">
 import {computed, onMounted, reactive, ref} from "vue";
 import { useValidation } from '@/common/s-form/validations'
+import { arrayFun, strChangFun } from '@/common/fun/fun-main'
 import {
     SFormGroupsItemInitType,
     SFormGroupsItemType,
@@ -296,7 +296,7 @@ const props = defineProps({
 //綁定值
 const formData = reactive({ ...props.formConfig.formModel });
 //表單顯示物件初始化
-const formAttributes = ref<SFormGroupsItemType[]>([]);
+const formAttributes = ref<SFormGroupsItemInitType[]>([]);
 
 onMounted(()=>{
   formAttributes.value = init(props.formConfig.groups)
@@ -350,104 +350,95 @@ defineExpose({
   getFormData
 });
 
-const handleModelUpdate = (val: string[], modelList: string[],formItem: SFormGroupsItemInitType) => {
-    const items = formItem.optionItem;
-    if (!items) {
-        return
+const handleModelUpdateByCheckboxM = (newValue: string[], modelObj: { [key: string]: any },formItem: SFormGroupsItemInitType) => {
+  const originalItems: SFormItemOption[] = formItem.optionItem || [];
+
+  // 若不是陣列，直接清空對應欄位並返回
+  if (!Array.isArray(newValue)) {
+    modelObj[formItem.modelName] = [];
+    return;
+  }
+  // 建立新的 items 陣列，保留不可變特性
+  const updatedItems = [...originalItems];
+
+  const processedValue = newValue.map(v => {
+    if (typeof v === 'string') {
+      const existingItem = updatedItems.find(item => !item.header && item.title === v)
+      if (existingItem) {
+        return existingItem;
+      }
+
+      const newItem: SFormItemOption = { title: v };
+      updatedItems.push(newItem);
+      return newItem;
     }
-    const editingItem = formItem.editingItem;
-    if(editingItem !== null){
+    return v;
+  });
+
+  // 移除重複 title 的項目
+  formItem.optionItem = arrayFun.deduplicateByKeys(updatedItems, "title")
+  // 更新 model 對應欄位
+  modelObj[formItem.modelName] = processedValue.map(item => item["title"]);
+}
+
+const editByCheckboxM = (item: SFormItemOption, formItem: SFormGroupsItemInitType) => {
+  if (!formItem.optionItem) {
+    return
+  }
+  const isEditing = formItem.editingItem === item
+  if (isEditing) {
+    const newTitle = item.title?.trim()
+    const allTitles = formItem.optionItem.map(opt => opt.title)
+    const duplicateCount = allTitles.filter(title => title === newTitle).length
+
+    // 如果同名 title 超過 1（自己也算進去），代表有重複
+    if (duplicateCount > 1) {
       return
     }
-    const existingTitles = items?.map(item => item.title)
-    if (!existingTitles) {
-        return
-    }
 
-    const uniqueVal = Array.from(new Set(val)) // 先去重複
-    const newItems = uniqueVal.filter(v => !existingTitles.includes(v))
-
-    // 加入新項目（非重複的）
-    newItems.forEach(v => {
-        items.push({ title: v })
-    })
-
-    // 更新 modelList，但只保留有對應 items 的
-    modelList.length = 0
-    uniqueVal.forEach(v => {
-        if (items.find(i => i.title === v)) {
-            modelList.push(v)
-        }
-    })
+    // 進行儲存：退出編輯模式
+    formItem.editingItem = null
+  } else {
+    // 進入編輯模式
+    formItem.editingItem = item
+  }
 }
 
-const edit = (item: SFormItemOption, formItem: SFormGroupsItemInitType) => {
-    if (!formItem.optionItem) {
-        return
-    }
-    const isEditing = formItem.editingItem === item
-    if (isEditing) {
-        const newTitle = item.title?.trim()
-        const allTitles = formItem.optionItem.map(opt => opt.title)
-        const duplicateCount = allTitles.filter(title => title === newTitle).length
+const queryFilterByCheckboxM = (items: SFormItemOption[], model: string[]) => {
+  return (value: unknown, queryText: string, item: { raw: SFormItemOption }): boolean => {
 
-        // 如果同名 title 超過 1（自己也算進去），代表有重複
-        if (duplicateCount > 1) {
-            return
-        }
-
-        // 進行儲存：退出編輯模式
-        formItem.editingItem = null
-    } else {
-        // 進入編輯模式
-        formItem.editingItem = item
-    }
+    const query = strChangFun.toLowerCaseString(queryText)
+    const availableOptions = items.filter(x => !model.includes(x.title))
+    const hasAnyMatch = availableOptions.some(
+        x => !x.header && strChangFun.toLowerCaseString(x.title).includes(query)
+    )
+    if (item.raw.header) return !hasAnyMatch
+    const text = strChangFun.toLowerCaseString(item.raw.title)
+    return text.includes(query)
+  }
 }
 
-const queryFilter = (items: SFormItemOption[], model: string[]) => {
-    return (value: unknown, queryText: string, item: { raw: SFormItemOption }): boolean => {
-
-        const toLowerCaseString = (val: unknown): string =>
-            String(val != null ? val : '').toLowerCase()
-
-        const query = toLowerCaseString(queryText)
-
-        const availableOptions = items.filter(x => !model.includes(x.title))
-
-        const hasAnyMatch = availableOptions.some(
-            x => !x.header && toLowerCaseString(x.title).includes(query)
-        )
-
-        if (item.raw.header) return !hasAnyMatch
-
-        const text = toLowerCaseString(item.raw.title)
-
-        return text.includes(query)
-    }
-}
-const removeSelection = (index: number, modelList: string[]) => {
-    modelList.splice(index, 1)
+const removeSelectionByCheckboxM = (index: number, modelList: string[]) => {
+  modelList.splice(index, 1)
 }
 
-const removeOptionItem = (item: SFormItemOption, formItem: SFormGroupsItemInitType) => {
-    if(!formItem.optionItem){
-        return
-    }
-    const index = formItem.optionItem.findIndex((i: SFormItemOption) => i === item)
-    if (index !== -1) {
-        formItem.optionItem.splice(index, 1)
-        // 如果正在編輯的是這筆，也一併清除
-        if (formItem.editingItem === item) {
-            formItem.editingItem = null
-        }
-    }
+const removeOptionItemByCheckboxM = (item: SFormItemOption, formItem: SFormGroupsItemInitType) => {
+  const optionList = formItem.optionItem;
+  if (!Array.isArray(optionList)) return;
+  formItem.optionItem = optionList.filter(opt => opt !== item);
+
+  // 如果正在編輯的是這筆，也一併清除
+  if (formItem.editingItem === item) {
+    formItem.editingItem = null;
+  }
 }
-const handleItemClick = (props: any, formItem: SFormGroupsItemInitType) => {
-    if(formItem.editingItem !== null){
-        console.log("正在編輯，跳過點擊")
-        return
-    }
-    props.onClick()
+
+const handleItemClickByCheckboxM = (props: { onClick: () => void }, formItem: SFormGroupsItemInitType) => {
+  if(formItem.editingItem){
+    console.log("正在編輯，跳過點擊")
+    return
+  }
+  props.onClick()
 }
 
 </script>

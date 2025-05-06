@@ -11,6 +11,13 @@ const getColorByYN = (type: string): string => {
     }
 };
 
+// 將值轉換為小寫字串
+const toLowerCaseString = (val: unknown): string => {
+    if (val === null || val === undefined) return '';
+    return String(val).toLowerCase();
+};
+
 export default{
-    getColorByYN
+    getColorByYN,
+    toLowerCaseString
 }

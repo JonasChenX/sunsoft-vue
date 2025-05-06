@@ -10,9 +10,13 @@ import strChangFun from './fun-str-chang';
 //下載相關方法
 import downloadFun from './fun-download';
 
+//陣列處理相關方法
+import arrayFun from './fun-array';
+
 export {
     randomFun,
     formatFun,
     strChangFun,
-    downloadFun
+    downloadFun,
+    arrayFun
 }
