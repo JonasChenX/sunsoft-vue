@@ -7,6 +7,20 @@
         class="px-1"
         v-for="(formItem, index) in formAttributes" :key="index"
       >
+
+        <!-- 下拉選單(複選) -->
+        <template v-if="formItem.type == 'dualListBox'">
+          <dual-list-box
+            :title="formItem.label"
+            :source="formItem.optionItem"
+            v-model="formData[formItem.modelName]"
+            label="title"
+            itemKey="value"
+            valueKey="value"
+            :is-disabled="false"
+          ></dual-list-box>
+        </template>
+
         <!-- input - 文字 -->
         <template v-if="formItem.type == 'inputText'">
           <div class="text-subtitle-1 text-medium-emphasis">{{ formItem.label }}</div>
@@ -274,7 +288,7 @@
   </v-form>
 </template>
 <script setup lang="ts">
-import {computed, onMounted, reactive, ref} from "vue";
+import {computed, defineAsyncComponent, onMounted, reactive, ref} from "vue";
 import { useValidation } from '@/common/s-form/validations'
 import { arrayFun, strChangFun } from '@/common/fun/fun-main'
 import {
@@ -283,6 +297,7 @@ import {
     SFormItemOption,
     SFormValidation
 } from "@/common/s-form/s-form-type";
+const DualListBox = defineAsyncComponent(() => import('./DualListBox.vue'));
 defineOptions({
   name: "s-form"
 });

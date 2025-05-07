@@ -1,4 +1,5 @@
 export enum InputType {
+    dualListBox = "dualListBox",
     InputText= "inputText",
     inputPwd= "inputPwd",
     InputDate = "inputDate",
