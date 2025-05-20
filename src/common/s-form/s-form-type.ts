@@ -21,9 +21,6 @@ export interface SFormGroupsItemType {
 //初始化用
 export interface SFormGroupsItemInitType extends SFormGroupsItemType{
     visible: boolean; //針對密碼隱碼
-    search: string;
-    editingItem: SFormItemOption | null; //搭配checkboxM
-    previousModel: string | number | string[] | boolean | null; //搭配checkboxM 修改前的值
 }
 
 export interface SFormItemOption {

@@ -1,124 +1,127 @@
 <template>
   <div class="mb-3">
     <div v-if="title" class="text-subtitle-1 text-medium-emphasis">{{ title }}</div>
-    <v-row class="dual-list-box-wrapper">
-      <v-col>
-        <v-card variant="outlined" elevation="1" :disabled="isDisabledProp">
-          <v-card-title class="text-caption ma-0 pa-0 text-center bg-blue-grey-darken-1 py-1">待選擇區塊</v-card-title>
-          <v-divider></v-divider>
-          <v-card-text class="pa-2">
-            <v-text-field
-                v-model="searchSource"
-                placeholder="輸入關鍵字搜尋..."
-                prepend-inner-icon="mdi-magnify"
-                density="compact"
-                variant="outlined"
-                hide-details
-                clearable
-                :disabled="isDisabledProp"
-                @click:clear="searchSource = ''"
-            ></v-text-field>
-          </v-card-text>
-          <v-divider></v-divider>
-          <v-list density="compact" class="list-box" :disabled="isDisabledProp">
-            <template v-for="(item, index) in filteredSource" :key="`src-${getItemKey(item, index)}`">
-              <v-list-item
-                  :value="getItemKey(item, index)"
-                  :class="{ 'list-item-selected-for-move': isSourceSelectedForMove(item) }"
-                  class="list-item-hover"
-                  :active="false" @click="toggleSourceSelectionForMove(item)"
+    <template v-if="!readonly">
+      <v-row class="dual-list-box-wrapper">
+        <v-col>
+          <v-card variant="outlined" elevation="1" :disabled="isDisabledProp">
+            <v-card-title class="text-caption ma-0 pa-0 text-center bg-blue-grey-darken-1 py-1">待選擇區塊</v-card-title>
+            <v-divider></v-divider>
+            <v-card-text class="pa-2">
+              <v-text-field
+                  v-model="searchSource"
+                  placeholder="輸入關鍵字搜尋..."
+                  prepend-inner-icon="mdi-magnify"
+                  density="compact"
+                  variant="outlined"
+                  hide-details
+                  clearable
                   :disabled="isDisabledProp"
-                  min-height="30px"
-              >
-                <v-list-item-title class="text-body-2">{{ getItemLabel(item) }}</v-list-item-title>
+                  @click:clear="searchSource = ''"
+              ></v-text-field>
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-list density="compact" class="list-box" :disabled="isDisabledProp">
+              <template v-for="(item, index) in filteredSource" :key="`src-${getItemKey(item, index)}`">
+                <v-list-item
+                    :value="getItemKey(item, index)"
+                    :class="{ 'list-item-selected-for-move': isSourceSelectedForMove(item) }"
+                    class="list-item-hover"
+                    :active="false"
+                    @click="toggleSourceSelectionForMove(item)"
+                    :disabled="isDisabledProp"
+                    min-height="30px"
+                >
+                  <v-list-item-title class="text-body-2">{{ getItemLabel(item) }}</v-list-item-title>
+                </v-list-item>
+              </template>
+              <v-list-item v-if="!filteredSource.length && availableSourceItems.length > 0">
+                <v-list-item-title class="text-disabled text-center">查無資料</v-list-item-title>
               </v-list-item>
+              <v-list-item v-if="!availableSourceItems.length">
+                <v-list-item-title class="text-disabled text-center">無可用項目</v-list-item-title>
+              </v-list-item>
+            </v-list>
+            <v-divider></v-divider>
+            <v-card-actions class="pa-0 d-flex flex-wrap align-stretch">
+              <v-btn variant="text" color="primary" size="small" class="flex-1-0 pa-0" min-height="50px" @click="selectAllSourceForMove" :disabled="isDisabledProp || filteredSource.length === 0">全選</v-btn>
+              <v-divider vertical></v-divider>
+              <v-btn variant="text" color="primary" size="small" class="flex-1-0 pa-0" min-height="50px" @click="deSelectAllSourceForMove" :disabled="isDisabledProp || internalSourceSelection.size === 0">全不選</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+
+        <v-col cols="auto" class="d-flex flex-column justify-center align-self-center pa-0">
+          <v-tooltip location="right" :disabled="isDisabledProp">
+            <template v-slot:activator="{ props: activatorProps }">
+              <v-btn icon variant="text" v-bind="activatorProps" class="my-1" @click="moveSelectedToDestination" :disabled="isDisabledProp || internalSourceSelection.size === 0">
+                <v-icon>mdi-chevron-right</v-icon>
+              </v-btn>
             </template>
-            <v-list-item v-if="!filteredSource.length && availableSourceItems.length > 0">
-              <v-list-item-title class="text-disabled text-center">查無資料</v-list-item-title>
-            </v-list-item>
-            <v-list-item v-if="!availableSourceItems.length">
-              <v-list-item-title class="text-disabled text-center">無可用項目</v-list-item-title>
-            </v-list-item>
-          </v-list>
-          <v-divider></v-divider>
-          <v-card-actions class="pa-0 d-flex flex-wrap align-stretch">
-            <v-btn variant="text" color="primary" size="small" class="flex-1-0 pa-0" min-height="50px" @click="selectAllSourceForMove" :disabled="isDisabledProp || filteredSource.length === 0">全選</v-btn>
-            <v-divider vertical></v-divider>
-            <v-btn variant="text" color="primary" size="small" class="flex-1-0 pa-0" min-height="50px" @click="deSelectAllSourceForMove" :disabled="isDisabledProp || internalSourceSelection.size === 0">全不選</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
+            <span>將選取項目加入已選</span>
+          </v-tooltip>
+          <v-tooltip location="right" :disabled="isDisabledProp">
+            <template v-slot:activator="{ props: activatorProps }">
+              <v-btn icon variant="text" v-bind="activatorProps" class="my-1" @click="moveSelectedToSource" :disabled="isDisabledProp || internalDestinationSelection.size === 0">
+                <v-icon>mdi-chevron-left</v-icon>
+              </v-btn>
+            </template>
+            <span>從已選移除選取項目</span>
+          </v-tooltip>
+        </v-col>
 
-      <v-col cols="auto" class="d-flex flex-column justify-center align-self-center pa-0">
-        <v-tooltip location="right" :disabled="isDisabledProp">
-          <template v-slot:activator="{ props: activatorProps }">
-            <v-btn icon variant="text" v-bind="activatorProps" class="my-1" @click="moveSelectedToDestination" :disabled="isDisabledProp || internalSourceSelection.size === 0">
-              <v-icon>mdi-chevron-right</v-icon>
-            </v-btn>
-          </template>
-          <span>將選取項目加入已選</span>
-        </v-tooltip>
-        <v-tooltip location="right" :disabled="isDisabledProp">
-          <template v-slot:activator="{ props: activatorProps }">
-            <v-btn icon variant="text" v-bind="activatorProps" class="my-1" @click="moveSelectedToSource" :disabled="isDisabledProp || internalDestinationSelection.size === 0">
-              <v-icon>mdi-chevron-left</v-icon>
-            </v-btn>
-          </template>
-          <span>從已選移除選取項目</span>
-        </v-tooltip>
-      </v-col>
-
-      <v-col>
-        <v-card variant="outlined" elevation="1" :disabled="isDisabledProp">
-          <v-card-title class="text-caption ma-0 pa-0 text-center bg-blue-grey-darken-1 py-1">已選區塊</v-card-title>
-          <v-divider></v-divider>
-          <v-card-text class="pa-2">
-            <v-text-field
-                v-model="searchDestination"
-                placeholder="輸入關鍵字搜尋..."
-                prepend-inner-icon="mdi-magnify"
-                density="compact"
-                variant="outlined"
-                hide-details
-                clearable
-                :disabled="isDisabledProp"
-                @click:clear="searchDestination = ''"
-            ></v-text-field>
-          </v-card-text>
-          <v-divider></v-divider>
-          <v-list density="compact" class="list-box" :disabled="isDisabledProp">
-            <template v-for="(item, index) in filteredDestination" :key="`dest-${getItemKey(item, index)}`">
-              <v-list-item
-                  :value="getItemKey(item, index)"
-                  :class="{ 'list-item-selected-for-move': isDestinationSelectedForMove(item) }"
-                  class="list-item-hover"
-                  :active="false" @click="toggleDestinationSelectionForMove(item)"
+        <v-col>
+          <v-card variant="outlined" elevation="1" :disabled="isDisabledProp">
+            <v-card-title class="text-caption ma-0 pa-0 text-center bg-blue-grey-darken-1 py-1">已選區塊</v-card-title>
+            <v-divider></v-divider>
+            <v-card-text class="pa-2">
+              <v-text-field
+                  v-model="searchDestination"
+                  placeholder="輸入關鍵字搜尋..."
+                  prepend-inner-icon="mdi-magnify"
+                  density="compact"
+                  variant="outlined"
+                  hide-details
+                  clearable
                   :disabled="isDisabledProp"
-                  min-height="30px"
-              >
-                <v-list-item-title class="text-body-2">{{ getItemLabel(item) }}</v-list-item-title>
+                  @click:clear="searchDestination = ''"
+              ></v-text-field>
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-list density="compact" class="list-box" :disabled="isDisabledProp">
+              <template v-for="(item, index) in filteredDestination" :key="`dest-${getItemKey(item, index)}`">
+                <v-list-item
+                    :value="getItemKey(item, index)"
+                    :class="{ 'list-item-selected-for-move': isDestinationSelectedForMove(item) }"
+                    class="list-item-hover"
+                    :active="false" @click="toggleDestinationSelectionForMove(item)"
+                    :disabled="isDisabledProp"
+                    min-height="30px"
+                >
+                  <v-list-item-title class="text-body-2">{{ getItemLabel(item) }}</v-list-item-title>
+                </v-list-item>
+              </template>
+              <v-list-item v-if="!filteredDestination.length && modelValue.length > 0">
+                <v-list-item-title class="text-disabled text-center">查無資料</v-list-item-title>
               </v-list-item>
-            </template>
-            <v-list-item v-if="!filteredDestination.length && modelValue.length > 0">
-              <v-list-item-title class="text-disabled text-center">查無資料</v-list-item-title>
-            </v-list-item>
-            <v-list-item v-if="!modelValue.length">
-              <v-list-item-title class="text-disabled text-center">尚未選擇項目</v-list-item-title>
-            </v-list-item>
-          </v-list>
-          <v-divider></v-divider>
-          <v-card-actions class="pa-0 d-flex flex-wrap align-stretch">
-            <v-btn variant="text" color="primary" size="small" class="flex-1-0 pa-0" min-height="50px" @click="selectAllDestinationForMove" :disabled="isDisabledProp || filteredDestination.length === 0">全選</v-btn>
-            <v-divider vertical></v-divider>
-            <v-btn variant="text" color="primary" size="small" class="flex-1-0 pa-0" min-height="50px" @click="deSelectAllDestinationForMove" :disabled="isDisabledProp || internalDestinationSelection.size === 0">全不選</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
+              <v-list-item v-if="!modelValue.length">
+                <v-list-item-title class="text-disabled text-center">尚未選擇項目</v-list-item-title>
+              </v-list-item>
+            </v-list>
+            <v-divider></v-divider>
+            <v-card-actions class="pa-0 d-flex flex-wrap align-stretch">
+              <v-btn variant="text" color="primary" size="small" class="flex-1-0 pa-0" min-height="50px" @click="selectAllDestinationForMove" :disabled="isDisabledProp || filteredDestination.length === 0">全選</v-btn>
+              <v-divider vertical></v-divider>
+              <v-btn variant="text" color="primary" size="small" class="flex-1-0 pa-0" min-height="50px" @click="deSelectAllDestinationForMove" :disabled="isDisabledProp || internalDestinationSelection.size === 0">全不選</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </template>
 
     <v-row class="mt-0 selected-summary-wrapper" v-if="modelValue.length > 0 || !isDisabledProp">
       <v-col>
-        <div class="border-md rounded pa-3 bg-grey-lighten-5" :class="{ 'disabled-overlay': isDisabledProp, 'error-border': errorMessages && errorMessages.length > 0 }">
+        <div class="border-md rounded pa-3 bg-grey-lighten-5" :class="{'error-border': errorMessages && errorMessages.length > 0 }">
           <h4 class="text-subtitle-2 font-weight-medium mb-2">最終已選項目：</h4>
           <v-chip-group v-if="currentlySelectedItems.length > 0" column>
             <v-chip
@@ -127,7 +130,6 @@
                 label
                 size="small"
                 class="ma-1"
-                :disabled="isDisabledProp"
                 :ripple="false"
             >
               {{ getItemLabel(item) }}
@@ -189,7 +191,11 @@ const props = defineProps({
   /**
    * 錯誤訊息陣列，由父元件傳入。
    */
-  errorMessages: { type: Array as PropType<string[]>, default: () => [] }
+  errorMessages: { type: Array as PropType<string[]>, default: () => [] },
+  /**
+   * 若為 true，則無法操作該元件。
+   */
+  readonly: { type: Boolean, default: false }
 });
 
 // 定義元件 emits
