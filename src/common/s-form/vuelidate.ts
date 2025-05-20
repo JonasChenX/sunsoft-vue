@@ -45,7 +45,7 @@ export const minValue = (min: number | Ref<number> | string | Ref<string>) =>
 export const not = (validator: ValidationRule) => helpers.withMessage('輸入的值不符合檢核規則', vuelidateNot(validator));
 export const numeric = helpers.withMessage('請輸入數字', vuelidateNumeric);
 export const or = (...validator: ValidationRule[]) => helpers.withMessage('輸入的值不符合部份的檢核規則', vuelidateOr(...validator));
-export const required = helpers.withMessage('請輸入值', vuelidateRequired);
+export const required = helpers.withMessage('此為必填', vuelidateRequired);
 export const requiredIf = (prop: boolean | string | (() => boolean | Promise<boolean>)) =>
     helpers.withMessage('請輸入值', vuelidateRequiredIf(prop));
 export const requiredUnless = (prop: boolean | string | (() => boolean | Promise<boolean>)) =>

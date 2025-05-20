@@ -118,7 +118,7 @@
 
     <v-row class="mt-0 selected-summary-wrapper" v-if="modelValue.length > 0 || !isDisabledProp">
       <v-col>
-        <div class="border-md rounded pa-3 bg-grey-lighten-5" :class="{ 'disabled-overlay': isDisabledProp }">
+        <div class="border-md rounded pa-3 bg-grey-lighten-5" :class="{ 'disabled-overlay': isDisabledProp, 'error-border': errorMessages && errorMessages.length > 0 }">
           <h4 class="text-subtitle-2 font-weight-medium mb-2">最終已選項目：</h4>
           <v-chip-group v-if="currentlySelectedItems.length > 0" column>
             <v-chip
@@ -134,6 +134,9 @@
             </v-chip>
           </v-chip-group>
           <p v-else class="text-disabled font-italic text-body-2">尚未選擇任何項目</p>
+        </div>
+        <div v-if="errorMessages && errorMessages.length > 0" class="text-error text-caption mt-1 ml-4">
+          <p v-for="(msg, i) in errorMessages" :key="i">{{ msg }}</p>
         </div>
       </v-col>
     </v-row>
@@ -183,6 +186,10 @@ const props = defineProps({
    * 若為 true，則禁用整個元件。
    */
   isDisabled: { type: Boolean, default: false },
+  /**
+   * 錯誤訊息陣列，由父元件傳入。
+   */
+  errorMessages: { type: Array as PropType<string[]>, default: () => [] }
 });
 
 // 定義元件 emits
@@ -191,7 +198,8 @@ const emit = defineEmits<{
    * 當已選項目改變時發射。
    * @param payload - 代表新選取項目的字串值陣列。
    */
-  (e: 'update:modelValue', payload: string[]): void
+  (e: 'update:modelValue', payload: string[]): void,
+  (e: 'blur'): void
 }>();
 
 // --- 響應式狀態 ---
@@ -299,6 +307,9 @@ watch(() => props.modelValue, (newModelValue) => {
       }
     });
   }
+
+  // 當 modelValue 改變時，觸發 blur 事件
+  emit('blur');
 }, { deep: true });
 
 
@@ -491,5 +502,9 @@ function deSelectAllDestinationForMove(): void {
   color: rgba(0, 0, 0, 0.7);
   font-style: italic;
   padding: 16px 0;
+}
+
+.error-border {
+  border: 1px solid #B71C1C !important; /* Vuetify 預設的 error 顏色 */
 }
 </style>

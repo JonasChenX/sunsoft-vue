@@ -18,6 +18,8 @@
             itemKey="value"
             valueKey="value"
             :is-disabled="false"
+            @blur="$v[formItem.modelName]?.$touch"
+            :error-messages="$v[formItem.modelName]?.$errors.map((e: any) => e.$message)"
           ></dual-list-box>
         </template>
 
