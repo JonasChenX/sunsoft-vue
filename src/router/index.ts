@@ -3,6 +3,7 @@ const home = () => import('@/components/Home.vue');
 const forbiddenView = () => import('@/components/ForbiddenView.vue');
 const notFoundView = () => import('@/components/NotFoundView.vue');
 const login = () => import('@/core/login/Login.vue');
+import ts01 from '@/router/ts01'
 import ss01 from '@/router/ss01'
 import ss03 from '@/router/ss03'
 import ss09 from '@/router/ss09'
@@ -35,6 +36,7 @@ const routes = [
         meta: { requiresAuth: false },
         component: notFoundView
     },
+    ...ts01,
     ...ss01,
     ...ss03,
     ...ss09

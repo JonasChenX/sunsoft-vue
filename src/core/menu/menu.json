@@ -193,6 +193,25 @@
         ]
     },
     {
+        "id": 24,
+        "meta":{
+            "directory": true,
+            "icon": "tasks",
+            "label": "測試區"
+        },
+        "children": [
+            {
+                "id": 25,
+                "path": "/ts001",
+                "meta":{
+                    "functionId": "TS001",
+                    "icon": "",
+                    "label": "後端執行按鈕群組"
+                }
+            }
+        ]
+    },
+    {
         "id": 23,
         "meta":{
             "directory": false,
